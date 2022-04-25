@@ -32,7 +32,7 @@ If you want to watch for any source code changes and automatically rebuild the e
 
 ```sh
 cd lens-kubescape
-npm run dev
+npm start
 ```
 
 ## Test
@@ -42,7 +42,7 @@ Open Lens application and navigate to a cluster. You should see "Kubescape" in a
 ## Uninstall
 
 ```sh
-rm ~/.k8slens/extensions/helloworld-sample
+rm ~/.k8slens/extensions/kubescape
 ```
 
 Restart Lens application.
