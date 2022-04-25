@@ -43,7 +43,7 @@ export default class KubescapeExtension extends Renderer.LensExtension {
   onActivate() {
     Logger.debug("Kubescape activated")
 
-    // const ipc = IpcRenderer.createInstance(this);
+    const ipc = IpcRenderer.createInstance(this);
     // setTimeout(() => ipc.broadcast("initialize", "an-id"), 5000);
 
   }
