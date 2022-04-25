@@ -1,7 +1,11 @@
-import { Renderer } from "@k8slens/extensions";
-import { KubescapeMainIcon, KubescapeMainPage } from "./src/main-page"
-import { KubescapePodDetails } from "./src/kinds/pod-details"
 import React from "react"
+
+import { Renderer } from "@k8slens/extensions";
+
+import { IpcRenderer } from './src/ipc/renderer'
+import { KubescapeMainIcon, KubescapeMainPage } from "./src/pages/main-page"
+import { KubescapePodDetails } from "./src/kinds/pod-details"
+import { Logger } from './src/utils/logger'
 
 export default class KubescapeExtension extends Renderer.LensExtension {
   clusterPages = [
@@ -36,7 +40,12 @@ export default class KubescapeExtension extends Renderer.LensExtension {
     }
   ]
 
-  async onActivate() {
-    console.log("Kubescape activated")
+  onActivate() {
+    Logger.debug("Kubescape activated")
+
+    // const ipc = IpcRenderer.createInstance(this);
+    // setTimeout(() => ipc.broadcast("initialize", "an-id"), 5000);
+
   }
+
 }

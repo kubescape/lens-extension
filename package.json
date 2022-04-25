@@ -27,11 +27,15 @@
     "clean": "rm -rf ./dist"
   },
   "dependencies": {
+    "@kubescape/install": "^0.3.0",
+    "abort-controller": "^3.0.0",
+    "node-fetch": "^2.6.0",
     "react-open-doodles": "^1.0.5"
   },
   "devDependencies": {
     "@k8slens/extensions": "^5.0.0",
     "@types/node": "^12.0.0",
+    "@types/node-fetch": "^2.5.7",
     "@types/react": "^16.9.35",
     "ts-loader": "^8.0.4",
     "typescript": "^4.0.3",
