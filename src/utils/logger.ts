@@ -15,25 +15,27 @@ export class Logger {
     private static log(level : LogLevels, message : string, ui : boolean) {
         let outputConsole = console.debug
 
-        let longMessage = `[Kubescape] ${new Date().toISOString().replace(/T/, ' ').replace(/\..+/, '')} ${message}`
+        let longMessage = `[Kubescape] ${new Date().toISOString().replace(/T/, ' ').replace(/\..+/, '')}`
         switch(level) {
             case LogLevels.Debug:
-                longMessage = `${longMessage} - debug `
+                longMessage = `${longMessage} - debug - `
                 break;
             case LogLevels.Error:
-                longMessage = `${longMessage} - error `
+                longMessage = `${longMessage} - error - `
                 outputConsole = console.error
                 break;
             case LogLevels.Warning:
-                longMessage = `${longMessage} - warn  `
+                longMessage = `${longMessage} - warn  - `
                 outputConsole = console.warn
                 break;
             case LogLevels.Info:
-                longMessage = `${longMessage} - info  `
+                longMessage = `${longMessage} - info  - `
                 outputConsole = console.info
                 break;
             default: break
         }
+
+        longMessage += message
 
         outputConsole(longMessage)
     }
