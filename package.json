@@ -27,7 +27,7 @@
     "clean": "rm -rf ./dist"
   },
   "dependencies": {
-    "@kubescape/install": "^0.3.0",
+    "@kubescape/install": "^0.3.2",
     "abort-controller": "^3.0.0",
     "node-fetch": "^2.6.0",
     "react-open-doodles": "^1.0.5"
