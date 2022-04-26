@@ -8,11 +8,12 @@
     "sourceMap": false,
     "declaration": false,
     "strict": false,
-    "noImplicitAny": true,
+    "noImplicitAny": false,
     "skipLibCheck": true,
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
     "experimentalDecorators": true,
+    "useDefineForClassFields": true,
     "jsx": "react"
   },
   "include": [

@@ -13,6 +13,14 @@ module.exports = [
           use: 'ts-loader',
           exclude: /node_modules/,
         },
+        {
+          test: /\.s?css$/,
+          use: [
+            "style-loader",
+            "css-loader",
+            "sass-loader",
+          ]
+        }
       ],
     },
     externals: [
@@ -23,7 +31,7 @@ module.exports = [
       }
     ],
     resolve: {
-      extensions: [ '.tsx', '.ts', '.js' ],
+      extensions: ['.tsx', '.ts', '.js'],
     },
     output: {
       libraryTarget: "commonjs2",
@@ -43,17 +51,26 @@ module.exports = [
           use: 'ts-loader',
           exclude: /node_modules/,
         },
+        {
+          test: /\.s?css$/,
+          use: [
+            "style-loader",
+            "css-loader",
+            "sass-loader",
+          ]
+        }
       ],
     },
     externals: [
       {
         "@k8slens/extensions": "var global.LensExtensions",
         "react": "var global.React",
-        "mobx": "var global.Mobx"
+        "mobx": "var global.Mobx",
+        "mobx-react": "var global.MobxReact",
       }
     ],
     resolve: {
-      extensions: [ '.tsx', '.ts', '.js' ],
+      extensions: ['.tsx', '.ts', '.js'],
     },
     output: {
       libraryTarget: "commonjs2",

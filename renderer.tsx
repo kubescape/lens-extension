@@ -3,7 +3,7 @@ import React from "react"
 import { Renderer } from "@k8slens/extensions";
 
 import { IpcRenderer } from './src/ipc/renderer'
-import { KubescapeMainIcon, KubescapeMainPage } from "./src/pages/main-page"
+import { KubescapeMainIcon, KubescapeMainPage } from "./src/components/MainPage"
 import { KubescapePodDetails } from "./src/kinds/pod-details"
 import { Logger } from './src/utils/logger'
 
@@ -12,7 +12,7 @@ export default class KubescapeExtension extends Renderer.LensExtension {
     {
       id: "kubescape-main",
       components: {
-        Page: () => <KubescapeMainPage extension={this}/>,
+        Page: () => <KubescapeMainPage />,
       }
     }
   ]
