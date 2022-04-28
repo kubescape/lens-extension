@@ -107,7 +107,7 @@ export default class KubescapeExtension extends Renderer.LensExtension {
     const scanClusterResult = await ipc.invoke(SCAN_CLUSTER_EVENT_NAME, clusterName);
     const scanResult = reportStore.scanResults.find(result => result.clusterId == clusterId);
     scanResult.isScanning = false;
-    scanResult.result = JSON.stringify(scanClusterResult);
+    scanResult.result = scanClusterResult;
     Logger.debug(`Saved scan result of cluster '${clusterName}'`);
   }
 }

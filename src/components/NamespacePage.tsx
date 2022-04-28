@@ -8,7 +8,7 @@ import { KubescapeReportStore } from "../stores/KubescapeReportStore";
 
 import "./NamespacePage.scss";
 
-const { Component } = Renderer;
+const { Component: { TableHead, TableRow, TableCell, Table, Spinner, Icon } } = Renderer;
 type Pod = Renderer.K8sApi.Pod;
 
 @observer
@@ -84,13 +84,37 @@ export class NamespacePage extends React.Component {
         return "Cluster scan in progress"
     }
 
+    @computed get tableRows() {
+        const controls = [];
+        for (let framework of this.activeClusterResult.result) {
+            for (let control of framework.controlReports) {
+                controls.push(
+                    <TableRow key={control.controlID} nowrap>
+                        <TableCell className="framework">{framework.name}</TableCell>
+                        <TableCell className="controlId">{control.controlID}</TableCell>
+                        <TableCell className="controlName">{control.name} </TableCell>
+                        <TableCell className="controlDescription"><Icon material="info" tooltip={control.description} /></TableCell>
+                        <TableCell className="failedResources">{control.failedResources}</TableCell>
+                        <TableCell className="excludedResources">{control.warningResources}</TableCell>
+                        <TableCell className="allResources">{control.totalResources}</TableCell>
+                        <TableCell className="riskScore">{control.score}%</TableCell>
+                    </TableRow>
+                )
+
+            }
+        }
+        return controls;
+    }
+
     render() {
+        console.log(this.activeClusterResult.result);
+
         if (!this.activeClusterResult || !this.activeClusterResult.result) {
             return (
                 <div className="NamespacePage flex center">
                     <div className="progressStatus">
-                    <Component.Spinner />
-                    <span>{this.statusString}</span>
+                        <Spinner />
+                        <span>{this.statusString}</span>
                     </div>
                 </div>
             )
@@ -98,9 +122,22 @@ export class NamespacePage extends React.Component {
 
         return (
             <>
-                <div>Selected Namespaces: {this.selectedNamespaces.map(ns => (<span>{ns}</span>))}</div>
+                {/**<div>Selected Namespaces: {this.selectedNamespaces.map(ns => (<span>{ns}</span>))}</div>
                 <div>Pods: </div>{this.podList.map(pod => (<div>{pod}</div>))}
-                <div>Scan Result: {this.activeClusterResult.result}</div>
+         <div>Scaned Frameworks Count: {this.activeClusterResult.result.length}</div>**/}
+                <Table>
+                    <TableHead>
+                        <TableCell className="framework">Framework</TableCell>
+                        <TableCell className="controlId">ID</TableCell>
+                        <TableCell className="controlName">Control Name</TableCell>
+                        <TableCell className="controlDescription">Description</TableCell>
+                        <TableCell className="failedResources">Failed Resources</TableCell>
+                        <TableCell className="excludedResources">Excluded Resources</TableCell>
+                        <TableCell className="allResources">All Resources</TableCell>
+                        <TableCell className="riskScore">Risk Score</TableCell>
+                    </TableHead>
+                    {this.tableRows}
+                </Table>
             </>
         )
     }
