@@ -22,6 +22,8 @@ import {
   SCAN_CLUSTER_TASK_INTERVAL_MS
 } from "./src/utils/consts";
 
+import { parseScanResult } from "./src/kubescape/scanResults";
+
 export default class KubescapeExtension extends Renderer.LensExtension {
   clusterPages = [
     {
@@ -107,7 +109,7 @@ export default class KubescapeExtension extends Renderer.LensExtension {
     const scanClusterResult = await ipc.invoke(SCAN_CLUSTER_EVENT_NAME, clusterName);
     const scanResult = reportStore.scanResults.find(result => result.clusterId == clusterId);
     scanResult.isScanning = false;
-    scanResult.result = scanClusterResult;
+    scanResult.result = parseScanResult(scanClusterResult);
     Logger.debug(`Saved scan result of cluster '${clusterName}'`);
   }
 }

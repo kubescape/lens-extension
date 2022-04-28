@@ -14,15 +14,15 @@
 
 .Table {
     .TableCell {
-        &.framework {
-            max-width: 80px;
-        }
-
         &.controlId {
             max-width: 80px;
         }
 
         &.controlName {
+            flex: 6;
+        }
+
+        &.controlDescription {
             flex: 6;
         }
     }

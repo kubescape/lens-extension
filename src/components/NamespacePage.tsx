@@ -7,6 +7,7 @@ import { KubescapePreferenceStore } from "../stores/KubescapePreferenceStore";
 import { KubescapeReportStore } from "../stores/KubescapeReportStore";
 
 import "./NamespacePage.scss";
+import { Logger } from "../utils/logger";
 
 const { Component: { TableHead, TableRow, TableCell, Table, Spinner, Icon } } = Renderer;
 type Pod = Renderer.K8sApi.Pod;
@@ -86,23 +87,22 @@ export class NamespacePage extends React.Component {
 
     @computed get tableRows() {
         const controls = [];
-        for (let framework of this.activeClusterResult.result) {
-            for (let control of framework.controlReports) {
-                controls.push(
-                    <TableRow key={control.controlID} nowrap>
-                        <TableCell className="framework">{framework.name}</TableCell>
-                        <TableCell className="controlId">{control.controlID}</TableCell>
-                        <TableCell className="controlName">{control.name} </TableCell>
-                        <TableCell className="controlDescription"><Icon material="info" tooltip={control.description} /></TableCell>
-                        <TableCell className="failedResources">{control.failedResources}</TableCell>
-                        <TableCell className="excludedResources">{control.warningResources}</TableCell>
-                        <TableCell className="allResources">{control.totalResources}</TableCell>
-                        <TableCell className="riskScore">{control.score}%</TableCell>
-                    </TableRow>
-                )
 
-            }
+        for (let control of this.activeClusterResult.result) {
+            controls.push(
+                <TableRow key={control.controlID} nowrap>
+                    <TableCell className="controlId">{control.controlID}</TableCell>
+                    <TableCell className="controlName">{control.name} </TableCell>
+                    <TableCell className="controlDescription">{control.description}</TableCell>
+                    <TableCell className="failedResources">{control.failedResources}</TableCell>
+                    <TableCell className="excludedResources">{control.warningResources}</TableCell>
+                    <TableCell className="allResources">{control.totalResources}</TableCell>
+                    <TableCell className="riskScore">{control.score}%</TableCell>
+                </TableRow>
+            )
+
         }
+
         return controls;
     }
 
@@ -127,7 +127,6 @@ export class NamespacePage extends React.Component {
          <div>Scaned Frameworks Count: {this.activeClusterResult.result.length}</div>**/}
                 <Table>
                     <TableHead>
-                        <TableCell className="framework">Framework</TableCell>
                         <TableCell className="controlId">ID</TableCell>
                         <TableCell className="controlName">Control Name</TableCell>
                         <TableCell className="controlDescription">Description</TableCell>
