@@ -26,4 +26,8 @@
             flex: 6;
         }
     }
+
+    .TableRow:nth-child(odd) {
+        background-color: #1a1a1a;
+    }
 }
