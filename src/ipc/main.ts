@@ -1,29 +1,21 @@
 import { Main } from "@k8slens/extensions";
-
+import { IpcRendererEvent } from "@k8slens/extensions/dist/src/extensions/common-api/types";
 import { KubescapeApi } from '@kubescape/install'
 import { Logger } from "../utils/logger";
+import { LensUI } from "../kubescape/ui";
+import { SCAN_CLUSTER_EVENT_NAME } from "../utils/consts";
 
 export class IpcMain extends Main.Ipc {
     constructor(extension: Main.LensExtension) {
         super(extension);
-
-        this.listen("initialize", onInitialize);
-        this.handle('data', handleDataRequest)
+        this.handle(SCAN_CLUSTER_EVENT_NAME, onScanCluster);
     }
 }
 
-
-function onInitialize(arg0: string, id: string) {
-    Logger.debug(`starting to initialize: ${arg0} ${id}`);
+async function onScanCluster(event: IpcRendererEvent, clusterName: string) {
+    Logger.debug(`Recieved scan cluster event for '${clusterName}'`);
+    const kubescapeApi = KubescapeApi.instance
+    const result = await kubescapeApi.scanCluster(new LensUI , clusterName);
+    Logger.debug(`Scan completed for cluster ${clusterName}`);
+    return result;
 }
-
-function handleDataRequest(event: string, handleDataRequest: any) {
-    Logger.debug(`I just received ${event} and kubescape is version ${KubescapeApi.instance.version}`)
-    return {
-        version : KubescapeApi.instance.version,
-        directory : KubescapeApi.instance.directory,
-        path : KubescapeApi.instance.path,
-        frameworks : KubescapeApi.instance.frameworksNames
-    }
-}
-

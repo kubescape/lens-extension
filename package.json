@@ -27,7 +27,7 @@
     "clean": "rm -rf ./dist"
   },
   "dependencies": {
-    "@kubescape/install": "^0.3.3",
+    "@kubescape/install": "^0.3.4",
     "abort-controller": "^3.0.0",
     "node-fetch": "^2.6.0"
   },

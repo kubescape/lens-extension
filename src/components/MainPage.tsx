@@ -1,13 +1,12 @@
 import React from "react";
 
 import { Renderer } from "@k8slens/extensions";
-import { makeObservable, observable } from "mobx";
+import { computed, makeObservable } from "mobx";
 import { observer } from "mobx-react"
-import { IpcRenderer } from '../ipc/renderer';
-import { Logger } from "../utils/logger";
-import "./MainPage.scss";
+import { NamespacePage, KubescapeIcon } from ".";
+import { KubescapePreferenceStore } from "../stores/KubescapePreferenceStore";
 
-import { KubescapeIcon } from "./KubescapeIcon";
+import "./MainPage.scss";
 
 export function KubescapeMainIcon(props: Renderer.Component.IconProps) {
     return <Renderer.Component.Icon><KubescapeIcon fill="currentColor" size="16" /></Renderer.Component.Icon>
@@ -20,32 +19,22 @@ export class KubescapeMainPage extends React.Component {
         makeObservable(this);
     }
 
-    @observable config = {
-        version: "",
-        directory: "",
-        path: "",
-        frameworks: [""]
-    }
-
-    async componentDidMount() {
-        try {
-            const ipcInstance = IpcRenderer.getInstance()
-            Logger.debug('Got IPC')
-            const res = await ipcInstance.invoke('data')
-            Logger.debug('Got the api instance')
-            this.config = res;
-        } catch (err) {
-            Logger.error(err)
-        }
-    }
+    @computed get isInstalled() { return KubescapePreferenceStore.getInstance().isInstalled };
+    @computed get config() { return KubescapePreferenceStore.getInstance().kubescapeConfig };
 
     configInfo = () => {
+        if (!this.isInstalled) {
+            return <div className="NamespacePage flex center">
+                <Renderer.Component.Spinner />
+                <span>Initializing</span>
+            </div>
+        }
+
         return (
             <>
                 <p>Version: <i>{this.config.version}</i></p>
-                <p>Base directory: <i>{this.config.directory}</i></p>
-                <p>Full Path: <i>{this.config.path}</i></p>
-                <p>Frameworks: <i>{this.config.frameworks.join(', ')}</i></p>
+                <p>Base directory: <i>{this.config.baseDirectory}</i></p>
+                <p>Frameworks: <i>{this.config.requiredFrameworks.join(', ')}</i></p>
             </>
         );
     };
@@ -63,7 +52,7 @@ export class KubescapeMainPage extends React.Component {
                         <Renderer.Component.NamespaceSelectFilter />
                     </div>
                 </header>
-                <div>TODO</div>
+                <NamespacePage />
             </Renderer.Component.TabLayout>
         )
     }

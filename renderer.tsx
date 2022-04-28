@@ -1,11 +1,26 @@
 import React from "react"
 
-import { Renderer } from "@k8slens/extensions";
+import { Renderer, Common } from "@k8slens/extensions";
+import { IpcRenderer } from "./src/ipc/renderer";
+import { Logger } from "./src/utils/logger";
 
-import { IpcRenderer } from './src/ipc/renderer'
-import { KubescapeMainIcon, KubescapeMainPage } from "./src/components/MainPage"
-import { KubescapePodDetails } from "./src/kinds/pod-details"
-import { Logger } from './src/utils/logger'
+import {
+  KubescapeMainIcon,
+  KubescapeMainPage,
+  KubescapePodDetails,
+  KubescapePreferenceInput,
+  KubescapePreferenceHint
+} from "./src/components";
+
+import {
+  KubescapePreferenceStore,
+  KubescapeReportStore
+} from "./src/stores";
+
+import {
+  SCAN_CLUSTER_EVENT_NAME,
+  SCAN_CLUSTER_TASK_INTERVAL_MS
+} from "./src/utils/consts";
 
 export default class KubescapeExtension extends Renderer.LensExtension {
   clusterPages = [
@@ -40,12 +55,59 @@ export default class KubescapeExtension extends Renderer.LensExtension {
     }
   ]
 
-  onActivate() {
-    Logger.debug("Kubescape activated")
+  appPreferences = [
+    {
+      title: "Kubescape Preferences",
+      components: {
+        Hint: () => <KubescapePreferenceHint />,
+        Input: () => <KubescapePreferenceInput />
+      }
+    }
+  ]
 
-    const ipc = IpcRenderer.createInstance(this);
-    // setTimeout(() => ipc.broadcast("initialize", "an-id"), 5000);
+  async onActivate() {
+    Logger.debug("Kubescape activated");
+    IpcRenderer.createInstance(this);
+    KubescapePreferenceStore.createInstance().loadExtension(this);
+    KubescapeReportStore.createInstance().loadExtension(this);
 
+    setInterval(() => this.scanClusterTask(), SCAN_CLUSTER_TASK_INTERVAL_MS);
   }
 
+  scanClusterTask = async () => {
+    const preferenceStore = KubescapePreferenceStore.getInstance();
+    const reportStore = KubescapeReportStore.getInstance();
+    const ipc = IpcRenderer.getInstance();
+
+    if (!preferenceStore.isInstalled) {
+      Logger.debug('Kubescape is not installed');
+      return;
+    }
+    const activeEntity = Renderer.Catalog.catalogEntities.activeEntity;
+    if (!activeEntity || !(activeEntity instanceof Common.Catalog.KubernetesCluster)) {
+      Logger.debug('No cluster selected');
+      return;
+    }
+
+    const clusterId = activeEntity.getId();
+    const clusterName = activeEntity.getName();
+    if (reportStore.scanResults.find(result => result.clusterId == clusterId)) {
+      Logger.debug(`Cluster '${clusterName}' - already scanned`);
+      return;
+    }
+
+    Logger.debug(`Invoking cluster scan on '${clusterName}'`);
+    reportStore.scanResults.push({
+      clusterId: clusterId,
+      clusterName: clusterName,
+      result: null,
+      isScanning: true
+    });
+
+    const scanClusterResult = await ipc.invoke(SCAN_CLUSTER_EVENT_NAME, clusterName);
+    const scanResult = reportStore.scanResults.find(result => result.clusterId == clusterId);
+    scanResult.isScanning = false;
+    scanResult.result = JSON.stringify(scanClusterResult);
+    Logger.debug(`Saved scan result of cluster '${clusterName}'`);
+  }
 }
