@@ -9,6 +9,7 @@ export type KubescapeClusterScanResult = {
     controls: any;
     frameworks: any;
     isScanning: boolean;
+    time: number;
 }
 
 export type KubescapeReportStoreModel = {

@@ -104,7 +104,8 @@ export default class KubescapeExtension extends Renderer.LensExtension {
       clusterName: clusterName,
       controls: null,
       frameworks: null,
-      isScanning: true
+      isScanning: true,
+      time: Date.now()
     });
 
     const scanClusterResult = await ipc.invoke(SCAN_CLUSTER_EVENT_NAME, clusterName);

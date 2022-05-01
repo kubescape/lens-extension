@@ -24,8 +24,13 @@ export class ClusterPage extends React.Component {
     @observable controlTableSearch = "";
 
     @computed get isInstalled() { return KubescapePreferenceStore.getInstance().isInstalled; }
-    @computed get config() { return KubescapePreferenceStore.getInstance().kubescapeConfig; };
+    @computed get config() { return KubescapePreferenceStore.getInstance().kubescapeConfig; }
     @computed get store() { return KubescapeReportStore.getInstance(); }
+
+    @computed get scanTime() {
+        const options = { year: 'numeric', month: 'numeric', day: 'numeric', hour: 'numeric', minute: 'numeric' } as const;
+        return (new Date(this.store.activeClusterReportResult.time)).toLocaleTimeString('en-US', options);
+    }
 
     configInfo = () => {
         if (!this.isInstalled) {
@@ -70,6 +75,10 @@ export class ClusterPage extends React.Component {
                             disabled={!this.store.isScanReady}
                             hidden={!this.isInstalled}
                         />
+                        {this.store.isScanReady ?
+                            <div><i><div>Last scan: </div><div>{this.scanTime}</div></i></div>
+                            : null
+                        }
                     </div>
                 </header>
                 <KubescapeControlTable search={this.controlTableSearch} />

@@ -5,7 +5,7 @@ import { Renderer } from "@k8slens/extensions";
 import { KubescapeReportStore, KubescapePreferenceStore } from "../stores";
 import { KubescapeControl } from "../stores";
 import { KubescapeControlDetails } from "./KubescapeControlDetails";
-import { prevDefault } from "../utils";
+import { docsUrl, prevDefault } from "../utils";
 
 import "./KubescapeControlTable.scss";
 
@@ -47,15 +47,13 @@ export class KubescapeControlTable extends React.Component<{search?: string}> {
     }
 
     getTableRow = (control: KubescapeControl) => {
-        const docUrl = `https://hub.armo.cloud/docs/${control.id.toLocaleLowerCase()}`
-
         return (
             <TableRow
                 onClick={prevDefault(() => this.onRowClick(control))}
                 key={control.id}
                 sortItem={control}
                 nowrap>
-                <TableCell className="controlId"><a target="_blank" href={docUrl}>{control.id}</a></TableCell>
+                <TableCell className="controlId"><a target="_blank" href={docsUrl(control)}>{control.id}</a></TableCell>
                 <TableCell className="controlName">{control.name} </TableCell>
                 <TableCell className="failedResources">{control.failedResources}</TableCell>
                 <TableCell className="allResources">{control.allResources}</TableCell>
