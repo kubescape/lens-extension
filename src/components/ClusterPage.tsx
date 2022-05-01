@@ -3,7 +3,8 @@ import React from "react";
 import { Renderer } from "@k8slens/extensions";
 import { observable, computed, makeObservable } from "mobx";
 import { observer } from "mobx-react"
-import { KubescapeControlTable, KubescapeIcon } from ".";
+import { KubescapeControlTable } from "./KubescapeControlTable";
+import { KubescapeIcon } from "./KubescapeIcon";
 import { KubescapePreferenceStore, KubescapeReportStore } from "../stores";
 
 const { Component: { Button, Icon, TabLayout, SearchInput } } = Renderer;

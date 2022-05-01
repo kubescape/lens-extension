@@ -73,7 +73,7 @@ export default class KubescapeExtension extends Renderer.LensExtension {
     KubescapePreferenceStore.createInstance().loadExtension(this);
     KubescapeReportStore.createInstance().loadExtension(this);
 
-    setInterval(() => this.scanClusterTask(), SCAN_CLUSTER_TASK_INTERVAL_MS);
+    setTimeout(() => this.scanClusterTask(), SCAN_CLUSTER_TASK_INTERVAL_MS);
   }
 
   scanClusterTask = async () => {
@@ -93,30 +93,42 @@ export default class KubescapeExtension extends Renderer.LensExtension {
 
     const clusterId = activeEntity.getId();
     const clusterName = activeEntity.getName();
-    if (reportStore.scanResults.find(result => result.clusterId == clusterId)) {
-      Logger.debug(`Cluster '${clusterName}' - already scanned`);
-      return;
+
+    let scanResult = reportStore.scanResults.find(result => result.clusterId == clusterId);
+
+    if (scanResult) {
+        if (!scanResult.isScanning) {
+            Logger.debug(`Cluster '${clusterName}' - already scanned`);
+            return;
+        }
+    } else {
+        reportStore.scanResults.push({
+            clusterId: clusterId,
+            clusterName: clusterName,
+            controls: null,
+            frameworks: null,
+            isScanning: true,
+            time: Date.now()
+        });
     }
 
     Logger.debug(`Invoking cluster scan on '${clusterName}'`);
-    reportStore.scanResults.push({
-      clusterId: clusterId,
-      clusterName: clusterName,
-      controls: null,
-      frameworks: null,
-      isScanning: true,
-      time: Date.now()
-    });
-
     const scanClusterResult = await ipc.invoke(SCAN_CLUSTER_EVENT_NAME, clusterName);
     const [controls, frameworks] = parseScanResult(scanClusterResult);
 
-    // Update Store
-    const scanResult = reportStore.scanResults.find(result => result.clusterId == clusterId);
-    scanResult.isScanning = false;
-    scanResult.controls = controls;
-    scanResult.frameworks = frameworks;
+    scanResult = reportStore.scanResults.find(result => result.clusterId == clusterId);
 
-    Logger.debug(`Saved scan result of cluster '${clusterName}'`);
+    if (scanResult) {
+        // Update Store
+        scanResult.controls = controls;
+        scanResult.frameworks = frameworks;
+    
+        Logger.debug(`Saved scan result of cluster '${clusterName}'`);
+    
+        scanResult.isScanning = false;
+    } else {
+        Logger.error('Scan results error - push was not synced')
+    }
+    setTimeout(() => this.scanClusterTask(), SCAN_CLUSTER_TASK_INTERVAL_MS);
   }
 }
