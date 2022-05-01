@@ -5,8 +5,8 @@ import { IpcRenderer } from "./src/ipc/renderer";
 import { Logger } from "./src/utils/logger";
 
 import {
-  KubescapeMainIcon,
-  KubescapeMainPage,
+  ClusterPageIcon,
+  ClusterPage,
   KubescapePodDetails,
   KubescapePreferenceInput,
   KubescapePreferenceHint
@@ -29,7 +29,7 @@ export default class KubescapeExtension extends Renderer.LensExtension {
     {
       id: "kubescape-main",
       components: {
-        Page: () => <KubescapeMainPage />,
+        Page: () => <ClusterPage />,
       }
     }
   ]
@@ -40,7 +40,7 @@ export default class KubescapeExtension extends Renderer.LensExtension {
       target: { pageId: "kubescape-main" },
       title: "Kubescape",
       components: {
-        Icon: KubescapeMainIcon,
+        Icon: ClusterPageIcon,
       }
     }
   ]
@@ -102,14 +102,20 @@ export default class KubescapeExtension extends Renderer.LensExtension {
     reportStore.scanResults.push({
       clusterId: clusterId,
       clusterName: clusterName,
-      result: null,
+      controls: null,
+      frameworks: null,
       isScanning: true
     });
 
     const scanClusterResult = await ipc.invoke(SCAN_CLUSTER_EVENT_NAME, clusterName);
+    const [controls, frameworks] = parseScanResult(scanClusterResult);
+
+    // Update Store
     const scanResult = reportStore.scanResults.find(result => result.clusterId == clusterId);
     scanResult.isScanning = false;
-    scanResult.result = parseScanResult(scanClusterResult);
+    scanResult.controls = controls;
+    scanResult.frameworks = frameworks;
+
     Logger.debug(`Saved scan result of cluster '${clusterName}'`);
   }
 }
