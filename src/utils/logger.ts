@@ -12,7 +12,7 @@ export class Logger {
 
     }
 
-    private static log(level : LogLevels, message : string, ui : boolean) {
+    private static log(level : LogLevels, message : any, ui : boolean) {
         let outputConsole = console.debug
 
         let longMessage = `[Kubescape] ${new Date().toISOString().replace(/T/, ' ').replace(/\..+/, '')}`
@@ -40,19 +40,19 @@ export class Logger {
         outputConsole(longMessage)
     }
 
-    public static debug(message: string, ui = false) {
+    public static debug(message: any, ui = false) {
         this.log(LogLevels.Debug, message, ui)
     }
 
-    public static error(message: string, ui = false) {
+    public static error(message: any, ui = false) {
         this.log(LogLevels.Error, message, ui)
     }
 
-    public static info(message: string, ui = false) {
+    public static info(message: any, ui = false) {
         this.log(LogLevels.Info, message, ui)
     }
 
-    public static warning(message: string, ui = false) {
+    public static warning(message: any, ui = false) {
         this.log(LogLevels.Warning, message, ui)
     }
 }
