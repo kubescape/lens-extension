@@ -18,8 +18,8 @@ export class Logger {
         let longMessage = `[Kubescape] ${new Date().toISOString().replace(/T/, ' ').replace(/\..+/, '')}`
         switch(level) {
             case LogLevels.Debug:
-                longMessage = `${longMessage} - debug - `
-                break;
+                outputConsole({info: longMessage, content:message})
+                return
             case LogLevels.Error:
                 longMessage = `${longMessage} - error - `
                 outputConsole = console.error
