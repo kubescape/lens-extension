@@ -1,5 +1,6 @@
 import { Common, Renderer } from "@k8slens/extensions";
 import { observable, makeObservable, computed, action } from "mobx";
+import { calculateSeverity, Severity } from "../kubescape/controlUtils";
 
 const { Store } = Common;
 
@@ -24,6 +25,7 @@ export type KubescapeControl = {
     riskScore: number;
     description: string;
     remediation: string;
+    severity : Severity;
 }
 
 export class KubescapeReportStore extends Store.ExtensionStore<KubescapeReportStoreModel> {
@@ -60,7 +62,8 @@ export class KubescapeReportStore extends Store.ExtensionStore<KubescapeReportSt
                 allResources: control.totalResources,
                 riskScore: control.score,
                 description: control.description,
-                remediation: control.remediation
+                remediation:  control.remediation,
+                severity : calculateSeverity(control)
             }
         });
     }

@@ -9,14 +9,15 @@ import { docsUrl, prevDefault } from "../utils";
 
 import "./KubescapeControlTable.scss";
 
-const { Component: { TableHead, TableRow, TableCell, Table, Spinner }, } = Renderer;
+const { Component: { TableHead, TableRow, TableCell, Table, Spinner, Badge }, } = Renderer;
 
 enum sortBy {
     id = "id",
     name = "name",
     failedResources = "failedResources",
     allResources = "allResources",
-    riskScore = "riskScore"
+    riskScore = "riskScore",
+    severity = "severity"
 }
 
 @observer
@@ -53,6 +54,7 @@ export class KubescapeControlTable extends React.Component<{search?: string}> {
                 key={control.id}
                 sortItem={control}
                 nowrap>
+                <TableCell className="severity"><Badge style={{backgroundColor : control.severity.color, color:"white", width:70, textAlign:"center"}} label={control.severity.name}/></TableCell>
                 <TableCell className="controlId"><a target="_blank" href={docsUrl(control)}>{control.id}</a></TableCell>
                 <TableCell className="controlName">{control.name} </TableCell>
                 <TableCell className="failedResources">{control.failedResources}</TableCell>
@@ -68,6 +70,7 @@ export class KubescapeControlTable extends React.Component<{search?: string}> {
         [sortBy.failedResources]: (control: KubescapeControl) => control.failedResources,
         [sortBy.allResources]: (control: KubescapeControl) => control.allResources,
         [sortBy.riskScore]: (control: KubescapeControl) => control.riskScore,
+        [sortBy.severity]: (control: KubescapeControl) => control.severity.value,
     };
 
     private getControlString = (control: KubescapeControl): string => {
@@ -104,6 +107,7 @@ export class KubescapeControlTable extends React.Component<{search?: string}> {
                     items={filteredItems}
                 >
                     <TableHead sticky={true}>
+                        <TableCell className="severity" sortBy={sortBy.severity}>Severity</TableCell>
                         <TableCell className="controlId" sortBy={sortBy.id}>ID</TableCell>
                         <TableCell className="controlName" sortBy={sortBy.name}>Control Name</TableCell>
                         <TableCell className="failedResources" sortBy={sortBy.failedResources}>Failed Resources</TableCell>
