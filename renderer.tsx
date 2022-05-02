@@ -12,6 +12,8 @@ import {
   KubescapePreferenceHint
 } from "./src/components";
 
+import { KubescapeDeploymentDetails } from './src/components/Deployments/KubescapeDeploymentDetails'
+
 import {
   KubescapePreferenceStore,
   KubescapeReportStore
@@ -53,6 +55,14 @@ export default class KubescapeExtension extends Renderer.LensExtension {
       priority: 10,
       components: {
         Details: (props: Renderer.Component.KubeObjectDetailsProps<Renderer.K8sApi.Pod>) => <KubescapePodDetails {...props} />
+      }
+    },
+    {
+      kind: "Deployment",
+      apiVersions: ["apps/v1"],
+      priority: 10,
+      components: {
+        Details: (props: Renderer.Component.KubeObjectDetailsProps<Renderer.K8sApi.Deployment>) => <KubescapeDeploymentDetails {...props} />
       }
     }
   ]
