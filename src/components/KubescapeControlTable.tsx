@@ -57,7 +57,7 @@ export class KubescapeControlTable extends React.Component<{search?: string}> {
                 <TableCell className="controlName">{control.name} </TableCell>
                 <TableCell className="failedResources">{control.failedResources}</TableCell>
                 <TableCell className="allResources">{control.allResources}</TableCell>
-                <TableCell className="riskScore">{control.riskScore}%</TableCell>
+                <TableCell className="riskScore">{Math.round(control.riskScore)}%</TableCell>
             </TableRow>
         );
     };
