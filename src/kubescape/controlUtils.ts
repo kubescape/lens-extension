@@ -1,3 +1,5 @@
+import { KubeObject } from "@k8slens/extensions/dist/src/common/k8s-api/kube-object"
+import { Logger } from "../utils"
 import { KubescapeControl, Severity } from "./types"
 
 const SeverityNone = "None"
@@ -62,6 +64,37 @@ export function toKubescapeControl(control: any): KubescapeControl {
         description: control.description,
         remediation: control.remediation,
         severity: calculateSeverity(control)
+    }
+}
+
+export function toKubeObject(kubeObject : any) : KubeObject {
+    try {
+        return {
+            kind : kubeObject.kind,
+            apiVersion : kubeObject.apiVersion,
+            metadata : kubeObject.metadata,
+            selfLink : kubeObject.metadata.selfLink,
+            getId : () => kubeObject.metadata.name,
+            getAge : () => kubeObject.metadata.creationTimestamp,
+            getAnnotations : () => kubeObject.metadata.annotations,
+            getLabels : ()=> kubeObject.metadata.labels,
+            getName : () => kubeObject.metadata.name,
+            getResourceVersion : () => kubeObject.metadata.resourceVersion,
+            getNs : () => kubeObject.metadata.namespace,
+            getOwnerRefs : () => kubeObject.metadata.ownerReferences,
+            getFinalizers : () => [],
+            getSearchFields : () => undefined,
+            getTimeDiffFromNow : () => Date.now() - Date.parse(kubeObject.metadata.creationTimestamp),
+            toPlainObject : () => kubeObject,
+            managedFields : () => kubeObject.metadata.managedFields,
+            delete : undefined,
+            patch : undefined,
+            update : undefined
+        }
+    }
+    catch {
+        Logger.debug(`not a KubeObject ${JSON.stringify(kubeObject)}`)
+        return null
     }
 }
 
