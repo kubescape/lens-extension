@@ -1,5 +1,6 @@
 import { KubescapeControl, Severity } from "./types"
 
+const SeverityNone = "None"
 const SeverityCritical = "Critical"
 const SeverityHigh = "High"
 const SeverityMedium = "Medium"
@@ -8,6 +9,13 @@ const SeverityUnknown = "Unknown"
 
 function calculateSeverity(control: any): Severity {
     const baseScore = control.baseScore
+    if (control.failedResources == 0) {
+        return {
+            name: SeverityNone,
+            value: 0,
+            color: "#23a71b"
+        }
+    }
     if (baseScore >= 9) {
         return {
             name: SeverityCritical,
