@@ -87,6 +87,7 @@ export function getRelatedObjectsFromControl(control: any): any[] {
         if (report.failedResources > 0) {
             report.ruleResponses?.forEach(response => {
                 response.alertObject.k8sApiObjects.forEach(k8sObj => {
+                    result.push(k8sObj)
                     k8sObj.relatedObjects?.forEach(relatedObject => {
                         result.push(relatedObject)
                     })
