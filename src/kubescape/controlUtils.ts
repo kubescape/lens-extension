@@ -80,6 +80,23 @@ export function getFailedControlsById(controls: any[], id: string): KubescapeCon
     ).map(control => toKubescapeControl(control));
 }
 
+export function getRelatedObjectsFromControl(control: any): any[] {
+    let result: any[] = []
+
+    control.ruleReports?.forEach(report => {
+        if (report.failedResources > 0) {
+            report.ruleResponses?.forEach(response => {
+                response.alertObject.k8sApiObjects.forEach(k8sObj => {
+                    k8sObj.relatedObjects?.forEach(relatedObject => {
+                        result.push(relatedObject)
+                    })
+                })
+            })
+        }
+    })
+    return result
+}
+
 export function docsUrl(control: KubescapeControl): string {
     return `https://hub.armo.cloud/docs/${control.id.toLocaleLowerCase()}`;
 }
