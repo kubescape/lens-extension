@@ -1,5 +1,6 @@
 export * from "./KubescapeIcon";
-export * from "./KubescapePodDetails";
+export * from "./KubescapeControlSeverity";
+export * from "./KubescapeWorkloadDetails";
 export * from "./KubescapePreferences";
 export * from "./ClusterPage";
 export * from "./KubescapeControlTable";

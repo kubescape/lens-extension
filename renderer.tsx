@@ -7,12 +7,10 @@ import { Logger } from "./src/utils/logger";
 import {
   ClusterPageIcon,
   ClusterPage,
-  KubescapePodDetails,
   KubescapePreferenceInput,
-  KubescapePreferenceHint
+  KubescapePreferenceHint,
+  KubescapeWorkloadDetails
 } from "./src/components";
-
-import { KubescapeDeploymentDetails } from './src/components/Deployments/KubescapeDeploymentDetails'
 
 import {
   KubescapePreferenceStore,
@@ -47,14 +45,14 @@ export default class KubescapeExtension extends Renderer.LensExtension {
     }
   ]
 
-  /* add to pod metadata */
+  /* workload object details */
   kubeObjectDetailItems = [
     {
       kind: "Pod",
       apiVersions: ["v1"],
       priority: 10,
       components: {
-        Details: (props: Renderer.Component.KubeObjectDetailsProps<Renderer.K8sApi.Pod>) => <KubescapePodDetails {...props} />
+        Details: (props: Renderer.Component.KubeObjectDetailsProps<Renderer.K8sApi.Pod>) => <KubescapeWorkloadDetails<Renderer.K8sApi.Pod> {...props} />
       }
     },
     {
@@ -62,7 +60,31 @@ export default class KubescapeExtension extends Renderer.LensExtension {
       apiVersions: ["apps/v1"],
       priority: 10,
       components: {
-        Details: (props: Renderer.Component.KubeObjectDetailsProps<Renderer.K8sApi.Deployment>) => <KubescapeDeploymentDetails {...props} />
+        Details: (props: Renderer.Component.KubeObjectDetailsProps<Renderer.K8sApi.Deployment>) => <KubescapeWorkloadDetails<Renderer.K8sApi.Deployment> {...props} />
+      }
+    },
+    {
+      kind: "DaemonSet",
+      apiVersions: ["apps/v1"],
+      priority: 10,
+      components: {
+        Details: (props: Renderer.Component.KubeObjectDetailsProps<Renderer.K8sApi.DaemonSet>) => <KubescapeWorkloadDetails<Renderer.K8sApi.DaemonSet> {...props} />
+      }
+    },
+    {
+      kind: "StatefulSet",
+      apiVersions: ["apps/v1"],
+      priority: 10,
+      components: {
+        Details: (props: Renderer.Component.KubeObjectDetailsProps<Renderer.K8sApi.StatefulSet>) => <KubescapeWorkloadDetails<Renderer.K8sApi.StatefulSet> {...props} />
+      }
+    },
+    {
+      kind: "ReplicaSet",
+      apiVersions: ["apps/v1"],
+      priority: 9,
+      components: {
+        Details: (props: Renderer.Component.KubeObjectDetailsProps<Renderer.K8sApi.ReplicaSet>) => <KubescapeWorkloadDetails<Renderer.K8sApi.ReplicaSet> {...props} />
       }
     }
   ]
@@ -107,19 +129,19 @@ export default class KubescapeExtension extends Renderer.LensExtension {
     let scanResult = reportStore.scanResults.find(result => result.clusterId == clusterId);
 
     if (scanResult) {
-        if (!scanResult.isScanning) {
-            Logger.debug(`Cluster '${clusterName}' - already scanned`);
-            return;
-        }
+      if (!scanResult.isScanning) {
+        Logger.debug(`Cluster '${clusterName}' - already scanned`);
+        return;
+      }
     } else {
-        reportStore.scanResults.push({
-            clusterId: clusterId,
-            clusterName: clusterName,
-            controls: null,
-            frameworks: null,
-            isScanning: true,
-            time: Date.now()
-        });
+      reportStore.scanResults.push({
+        clusterId: clusterId,
+        clusterName: clusterName,
+        controls: null,
+        frameworks: null,
+        isScanning: true,
+        time: Date.now()
+      });
     }
 
     Logger.debug(`Invoking cluster scan on '${clusterName}'`);
@@ -129,15 +151,15 @@ export default class KubescapeExtension extends Renderer.LensExtension {
     scanResult = reportStore.scanResults.find(result => result.clusterId == clusterId);
 
     if (scanResult) {
-        // Update Store
-        scanResult.controls = controls;
-        scanResult.frameworks = frameworks;
-    
-        Logger.debug(`Saved scan result of cluster '${clusterName}'`);
-    
-        scanResult.isScanning = false;
+      // Update Store
+      scanResult.controls = controls;
+      scanResult.frameworks = frameworks;
+
+      Logger.debug(`Saved scan result of cluster '${clusterName}'`);
+
+      scanResult.isScanning = false;
     } else {
-        Logger.error('Scan results error - push was not synced')
+      Logger.error('Scan results error - push was not synced')
     }
     setTimeout(() => this.scanClusterTask(), SCAN_CLUSTER_TASK_INTERVAL_MS);
   }

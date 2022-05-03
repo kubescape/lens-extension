@@ -3,8 +3,7 @@ import React from "react";
 import { Renderer } from "@k8slens/extensions";
 import { observable, computed, makeObservable } from "mobx";
 import { observer } from "mobx-react"
-import { KubescapeControlTable } from "./KubescapeControlTable";
-import { KubescapeIcon } from "./KubescapeIcon";
+import { KubescapeControlTable, KubescapeIcon, sortBy } from ".";
 import { KubescapePreferenceStore, KubescapeReportStore } from "../stores";
 
 const { Component: { Button, Icon, TabLayout, SearchInput } } = Renderer;
@@ -50,6 +49,8 @@ export class ClusterPage extends React.Component {
     }
 
     render() {
+        const columns = ['Severity', 'ID', 'Control Name', 'Failed Resources', 'All Resources', 'Risk Score'];
+
         return (
             <TabLayout className="ClusterPage">
                 <header className="flex gaps align-center">
@@ -82,7 +83,7 @@ export class ClusterPage extends React.Component {
                         }
                     </div>
                 </header>
-                <KubescapeControlTable search={this.controlTableSearch} />
+                <KubescapeControlTable search={this.controlTableSearch} columns={columns} sortByDefault={{ sortBy: sortBy.severity, orderBy: "desc" }}/>
             </TabLayout>
         );
     }

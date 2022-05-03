@@ -18,12 +18,28 @@
             max-width: 80px;
         }
 
-        &.controlName {
-            flex: 5;
+        &.severity {
+            max-width: 80px;
         }
 
+        &.failedResources {
+            max-width: 140px;
+        }
+
+        &.allResources {
+            max-width: 120px;
+        }
+
+        &.riskScore {
+            max-width: 90px;
+        }
+        // &.controlName {
+        //     flex: 5;
+        // }
+
         &.controlDescription {
-            flex: 6;
+            word-break: break-word;
+            flex: 1.5;
         }
     }
 

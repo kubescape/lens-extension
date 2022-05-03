@@ -3,8 +3,9 @@ import React from "react";
 import { Renderer } from "@k8slens/extensions";
 import { makeObservable } from "mobx";
 import { observer } from "mobx-react"
-import { KubescapeControl } from "../stores";
-import { docsUrl } from "../utils";
+import { KubescapeControl } from "../kubescape/types";
+import { docsUrl } from "../kubescape/controlUtils";
+import { KubescapeControlSeverity } from "./KubescapeControlSeverity";
 
 const { Component: { Drawer, DrawerItem, DrawerTitle, Icon } } = Renderer;
 
@@ -26,6 +27,7 @@ export class KubescapeControlDetails extends React.Component<{ control?: Kubesca
             title = `${control.id} - ${control.name}`;
             items.push(<DrawerTitle>{control.name}</DrawerTitle>);
             items.push(<DrawerItem name="Description">{control.description}</DrawerItem>);
+            items.push(<DrawerItem name="Severity"><KubescapeControlSeverity control={control} /></DrawerItem>)
             items.push(<DrawerItem name="Remediation">{control.remediation}</DrawerItem>);
             items.push(<DrawerItem name="More Information">
                 <a target="_blank" href={docsUrl(control)}><Icon material="open_in_browser"></Icon></a>

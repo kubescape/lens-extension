@@ -3,32 +3,41 @@ import { makeObservable, observable, computed } from "mobx";
 import { observer } from "mobx-react"
 import { Renderer } from "@k8slens/extensions";
 import { KubescapeReportStore, KubescapePreferenceStore } from "../stores";
-import { KubescapeControl } from "../stores";
-import { KubescapeControlDetails } from "./KubescapeControlDetails";
-import { docsUrl, prevDefault } from "../utils";
+import { KubescapeControl } from "../kubescape/types";
+import { KubescapeControlDetails, KubescapeControlSeverity } from ".";
+import { docsUrl } from "../kubescape/controlUtils";
+import { prevDefault } from "../utils";
 
 import "./KubescapeControlTable.scss";
 
 const { Component: { TableHead, TableRow, TableCell, Table, Spinner, Badge }, } = Renderer;
 
-enum sortBy {
+export enum sortBy {
     id = "id",
     name = "name",
     failedResources = "failedResources",
     allResources = "allResources",
     riskScore = "riskScore",
-    severity = "severity"
+    severity = "severity",
+    description = "description"
 }
 
 @observer
-export class KubescapeControlTable extends React.Component<{search?: string}> {
+export class KubescapeControlTable extends React.Component<{
+    search?: string,
+    columns?: string[],
+    controls?: KubescapeControl[],
+    nowrap?: boolean,
+    sortByDefault: any,
+    disableRowClick?: boolean
+}> {
     constructor(props) {
         super(props);
         makeObservable(this);
     }
-    
+
     @observable selectedControl = null;
-    
+
     @computed get store() { return KubescapeReportStore.getInstance() }
 
     @computed get statusString() {
@@ -47,19 +56,82 @@ export class KubescapeControlTable extends React.Component<{search?: string}> {
         }
     }
 
+    get columns() {
+        const allColumns = [
+            {
+                title: 'Severity',
+                sortBy: sortBy.severity,
+                className: 'severity',
+                value: (control: KubescapeControl) => <KubescapeControlSeverity control={control} />
+
+            },
+            {
+                title: 'ID',
+                sortBy: sortBy.id,
+                className: 'controlId',
+                value: (control: KubescapeControl) => <a target="_blank" href={docsUrl(control)}>{control.id}</a>
+            },
+            {
+                title: 'Control Name',
+                sortBy: sortBy.name,
+                className: 'controlName',
+                value: (control: KubescapeControl) => control.name
+            },
+            {
+                title: 'Description',
+                sortBy: sortBy.description,
+                className: 'controlDescription',
+                value: (control: KubescapeControl) => control.description
+            },
+            {
+                title: 'Failed Resources',
+                sortBy: sortBy.failedResources,
+                className: 'failedResources',
+                value: (control: KubescapeControl) => control.failedResources
+            },
+            {
+                title: 'All Resources',
+                sortBy: sortBy.allResources,
+                className: 'allResources',
+                value: (control) => control.allResources
+            },
+            {
+                title: 'Risk Score',
+                sortBy: sortBy.riskScore,
+                className: 'riskScore',
+                value: (control: KubescapeControl) => `${Math.round(control.riskScore)}%`
+            }
+        ]
+
+        if (this.props.columns) {
+            return allColumns.filter(col => this.props.columns.includes(col.title));
+        }
+
+        return allColumns;
+    }
+
+    getTableHeader = () => {
+        return (
+            <TableHead sticky={true}>
+                {this.columns.map(col => <TableCell key={col.title} className={col.className} sortBy={col.sortBy}>{col.title}</TableCell>)}
+            </TableHead>);
+    }
+
     getTableRow = (control: KubescapeControl) => {
+        let rowClick = prevDefault(() => this.onRowClick(control))
+        if (this.props.disableRowClick) {
+            rowClick = () => null;
+        }
+
         return (
             <TableRow
-                onClick={prevDefault(() => this.onRowClick(control))}
+                onClick={rowClick}
                 key={control.id}
                 sortItem={control}
-                nowrap>
-                <TableCell className="severity"><Badge style={{backgroundColor : control.severity.color, color:"white", width:70, textAlign:"center"}} label={control.severity.name}/></TableCell>
-                <TableCell className="controlId"><a target="_blank" href={docsUrl(control)}>{control.id}</a></TableCell>
-                <TableCell className="controlName">{control.name} </TableCell>
-                <TableCell className="failedResources">{control.failedResources}</TableCell>
-                <TableCell className="allResources">{control.allResources}</TableCell>
-                <TableCell className="riskScore">{Math.round(control.riskScore)}%</TableCell>
+                nowrap={this.props.nowrap ?? true}>
+                {this.columns.map(col =>
+                    <TableCell className={col.className}>{col.value(control)}</TableCell>
+                )}
             </TableRow>
         );
     };
@@ -71,6 +143,7 @@ export class KubescapeControlTable extends React.Component<{search?: string}> {
         [sortBy.allResources]: (control: KubescapeControl) => control.allResources,
         [sortBy.riskScore]: (control: KubescapeControl) => control.riskScore,
         [sortBy.severity]: (control: KubescapeControl) => control.severity.value,
+        [sortBy.description]: (control: KubescapeControl) => control.description
     };
 
     private getControlString = (control: KubescapeControl): string => {
@@ -88,9 +161,14 @@ export class KubescapeControlTable extends React.Component<{search?: string}> {
                 </div>
             )
         }
-        const { search } = this.props;
-        const query = search.toLowerCase();
-        const filteredItems = this.store.kubescapeControls.filter((item) => (this.getControlString(item).includes(query)));
+        const { search, controls, sortByDefault, disableRowClick } = this.props;
+
+        let items = controls ? controls : this.store.kubescapeControls;
+
+        if (search) {
+            const query = search?.toLowerCase();
+            items = items.filter((item) => (this.getControlString(item).includes(query)))
+        }
 
         return (
             <>
@@ -100,20 +178,13 @@ export class KubescapeControlTable extends React.Component<{search?: string}> {
                 ></KubescapeControlDetails>
                 <Table
                     tableId="controlReportsTable"
-                    selectable={true}
+                    selectable={disableRowClick ? false : true}
                     sortable={this.sortingCallbacks}
-                    sortByDefault={{ sortBy: sortBy.failedResources, orderBy: "desc" }}
+                    sortByDefault={sortByDefault}
                     renderRow={this.getTableRow}
-                    items={filteredItems}
+                    items={items}
                 >
-                    <TableHead sticky={true}>
-                        <TableCell className="severity" sortBy={sortBy.severity}>Severity</TableCell>
-                        <TableCell className="controlId" sortBy={sortBy.id}>ID</TableCell>
-                        <TableCell className="controlName" sortBy={sortBy.name}>Control Name</TableCell>
-                        <TableCell className="failedResources" sortBy={sortBy.failedResources}>Failed Resources</TableCell>
-                        <TableCell className="allResources" sortBy={sortBy.allResources}>All Resources</TableCell>
-                        <TableCell className="riskScore" sortBy={sortBy.riskScore}>Risk Score</TableCell>
-                    </TableHead>
+                    {this.getTableHeader()}
                 </Table>
             </>
         )
