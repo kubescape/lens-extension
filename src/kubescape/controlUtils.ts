@@ -2,7 +2,6 @@ import { KubeObject } from "@k8slens/extensions/dist/src/common/k8s-api/kube-obj
 import { Logger } from "../utils"
 import { KubescapeControl, Severity } from "./types"
 
-const SeverityNone = "None"
 const SeverityCritical = "Critical"
 const SeverityHigh = "High"
 const SeverityMedium = "Medium"
@@ -11,13 +10,6 @@ const SeverityUnknown = "Unknown"
 
 function calculateSeverity(control: any): Severity {
     const baseScore = control.baseScore
-    if (control.failedResources == 0) {
-        return {
-            name: SeverityNone,
-            value: 0,
-            color: "#23a71b"
-        }
-    }
     if (baseScore >= 9) {
         return {
             name: SeverityCritical,
@@ -53,6 +45,17 @@ function calculateSeverity(control: any): Severity {
     }
 }
 
+function getSeverity(control : any) : Severity {
+    const severity = calculateSeverity(control)
+
+    if (control.failedResources == 0) {
+        severity.value = 0;
+        severity.color = "#23a71b"
+    }
+    
+    return severity
+}
+
 
 export function toKubescapeControl(control: any): KubescapeControl {
     return {
@@ -63,7 +66,7 @@ export function toKubescapeControl(control: any): KubescapeControl {
         riskScore: control.score,
         description: control.description,
         remediation: control.remediation,
-        severity: calculateSeverity(control)
+        severity: getSeverity(control)
     }
 }
 
