@@ -33,9 +33,9 @@
         &.riskScore {
             max-width: 90px;
         }
-        // &.controlName {
-        //     flex: 5;
-        // }
+        &.status {
+            max-width: 80px;
+        }
 
         &.controlDescription {
             word-break: break-word;

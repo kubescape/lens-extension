@@ -1,6 +1,6 @@
 import { KubeObject } from "@k8slens/extensions/dist/src/common/k8s-api/kube-object"
 import { Logger } from "../utils"
-import { KubescapeControl, Severity } from "./types"
+import { KubescapeControl, Severity, ControlStatus } from "./types"
 
 const SeverityCritical = "Critical"
 const SeverityHigh = "High"
@@ -45,15 +45,29 @@ function calculateSeverity(control: any): Severity {
     }
 }
 
-function getSeverity(control : any) : Severity {
-    const severity = calculateSeverity(control)
-
+function calculateStatus(control: any): ControlStatus {
     if (control.failedResources == 0) {
-        severity.value = 0;
-        severity.color = "#23a71b"
+        if (control.totalResources > 0) {
+            return {
+                title: 'Passed',
+                icon: 'check_circle_outline',
+                value: 0.1,
+                color: "#23a71b"
+            }
+        }
+        return {
+            title: 'Skipped/Irrelevant',
+            icon: 'help_outline',
+            value: 0.1,
+            color: 'gray'
+        }
     }
-    
-    return severity
+    return {
+        title: 'Failed',
+        icon: 'highlight_off',
+        value: 1,
+        color: "#e1449f"
+    }
 }
 
 
@@ -66,7 +80,9 @@ export function toKubescapeControl(control: any): KubescapeControl {
         riskScore: control.score,
         description: control.description,
         remediation: control.remediation,
-        severity: getSeverity(control)
+        severity: calculateSeverity(control),
+        status: calculateStatus(control),
+        rawResult: control,
     }
 }
 
@@ -123,7 +139,9 @@ export function getRelatedObjectsFromControl(control: any): any[] {
         if (report.failedResources > 0) {
             report.ruleResponses?.forEach(response => {
                 response.alertObject.k8sApiObjects.forEach(k8sObj => {
-                    result.push(k8sObj)
+                    if (k8sObj.metadata) {
+                        result.push(k8sObj)
+                    }
                     k8sObj.relatedObjects?.forEach(relatedObject => {
                         result.push(relatedObject)
                     })

@@ -1,3 +1,10 @@
+export type ControlStatus = {
+    title: string;
+    icon: string;
+    value: number;
+    color: string;
+}
+
 export type Severity = {
     name: string;
     value: number;
@@ -26,4 +33,6 @@ export type KubescapeControl = {
     description: string;
     remediation: string;
     severity: Severity;
+    status: ControlStatus;
+    rawResult: any;
 }
