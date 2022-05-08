@@ -13,6 +13,9 @@
 }
 
 .Table {
+    background: var(--contentColor);
+    border-top: 1px solid var(--tableHeaderBorderColor);
+    
     .TableCell {
         &.controlId {
             max-width: 80px;
@@ -43,7 +46,7 @@
         }
     }
 
-    .TableRow:nth-child(odd) {
-        background-color: #1a1a1a;
-    }
+    // .TableRow:nth-child(odd) {
+    //     background-color: #1a1a1a;
+    // }
 }

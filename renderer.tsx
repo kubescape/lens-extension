@@ -112,15 +112,15 @@ export default class KubescapeExtension extends Renderer.LensExtension {
     },
   ]
 
-  appPreferences = [
-    {
-      title: "Kubescape Preferences",
-      components: {
-        Hint: () => <KubescapePreferenceHint />,
-        Input: () => <KubescapePreferenceInput />
-      }
-    }
-  ]
+  // appPreferences = [
+  //   {
+  //     title: "Kubescape Preferences",
+  //     components: {
+  //       Hint: () => <KubescapePreferenceHint />,
+  //       Input: () => <KubescapePreferenceInput />
+  //     }
+  //   }
+  // ]
 
   async onActivate() {
     Logger.debug("Kubescape activated");
