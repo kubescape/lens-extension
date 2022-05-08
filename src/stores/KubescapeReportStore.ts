@@ -45,13 +45,36 @@ export class KubescapeReportStore extends Store.ExtensionStore<KubescapeReportSt
         this.scanResults = filtered;
     }
 
-
-    getKubeObject = async (kind: string, apiVersion: string, id: string): Promise<Renderer.K8sApi.KubeObject> => {
-        if (!(kind in this.resourceKindToStore)) {
-            this.resourceKindToStore[kind] = Renderer.K8sApi.apiManager.getStore(Renderer.K8sApi.apiManager.getApiByKind(kind, apiVersion)) as Renderer.K8sApi.KubeObjectStore<Renderer.K8sApi.KubeObject>;
+    getStore = (kind, apiVersion) => {
+        switch (kind) {
+            case "Role":
+                return Renderer.K8sApi.apiManager.getStore(Renderer.K8sApi.roleApi) as Renderer.K8sApi.RolesStore;
+            case "Namespace":
+                return (Renderer.K8sApi.apiManager.getStore(Renderer.K8sApi.namespacesApi) as unknown) as Renderer.K8sApi.NamespaceStore;
+            case "Pod":
+                return Renderer.K8sApi.apiManager.getStore(Renderer.K8sApi.podsApi) as Renderer.K8sApi.PodsStore;
+            case "Deployment":
+                return Renderer.K8sApi.apiManager.getStore(Renderer.K8sApi.deploymentApi) as Renderer.K8sApi.DeploymentStore;
+            case "StatefulSet":
+                return Renderer.K8sApi.apiManager.getStore(Renderer.K8sApi.statefulSetApi) as Renderer.K8sApi.StatefulSetStore;
+            case "DaemonSet":
+                return Renderer.K8sApi.apiManager.getStore(Renderer.K8sApi.daemonSetApi) as Renderer.K8sApi.DaemonSetStore;
+            case "Secret":
+                return Renderer.K8sApi.apiManager.getStore(Renderer.K8sApi.secretsApi) as Renderer.K8sApi.SecretsStore;
+            case "Service":
+                return Renderer.K8sApi.apiManager.getStore(Renderer.K8sApi.serviceApi) as Renderer.K8sApi.ServiceStore;
+            case "VolumeClaim":
+                return Renderer.K8sApi.apiManager.getStore(Renderer.K8sApi.pvcApi) as Renderer.K8sApi.VolumeClaimStore;
+            case "ConfigMap":
+                return Renderer.K8sApi.apiManager.getStore(Renderer.K8sApi.configMapApi) as Renderer.K8sApi.ConfigMapsStore;
         }
 
-        const store = this.resourceKindToStore[kind];
+        return Renderer.K8sApi.apiManager.getStore(Renderer.K8sApi.apiManager.getApiByKind(kind, apiVersion)) as Renderer.K8sApi.KubeObjectStore<Renderer.K8sApi.KubeObject>;
+    }
+
+    getKubeObject = async (kind: string, apiVersion: string, id: string): Promise<Renderer.K8sApi.KubeObject> => {
+        const store = this.getStore(kind, apiVersion);
+
         if (!store.isLoaded) {
             await store.loadAll();
         }
