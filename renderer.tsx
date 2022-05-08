@@ -48,6 +48,14 @@ export default class KubescapeExtension extends Renderer.LensExtension {
   /* workload object details */
   kubeObjectDetailItems = [
     {
+      kind: "Node",
+      apiVersions: ["v1"],
+      priority: 9,
+      components: {
+        Details: (props: Renderer.Component.KubeObjectDetailsProps<Renderer.K8sApi.Node>) => <KubescapeWorkloadDetails<Renderer.K8sApi.Node> {...props} />
+      }
+    },
+    {
       kind: "Pod",
       apiVersions: ["v1"],
       priority: 10,
@@ -82,11 +90,26 @@ export default class KubescapeExtension extends Renderer.LensExtension {
     {
       kind: "ReplicaSet",
       apiVersions: ["apps/v1"],
-      priority: 9,
+      priority: 10,
       components: {
         Details: (props: Renderer.Component.KubeObjectDetailsProps<Renderer.K8sApi.ReplicaSet>) => <KubescapeWorkloadDetails<Renderer.K8sApi.ReplicaSet> {...props} />
       }
-    }
+    },
+    {
+      kind: "ServiceAccount",
+      apiVersions: ["v1"],
+      priority: 10,
+      components: {
+        Details: (props: Renderer.Component.KubeObjectDetailsProps<Renderer.K8sApi.ServiceAccount>) => <KubescapeWorkloadDetails<Renderer.K8sApi.ServiceAccount> {...props} />
+      }
+    },
+    {
+      kind: "CronJob",
+      apiVersions: ["batch/v1beta1"],
+      components: {
+        Details: (props: Renderer.Component.KubeObjectDetailsProps<Renderer.K8sApi.CronJob>) => <KubescapeWorkloadDetails<Renderer.K8sApi.CronJob> {...props} />
+      },
+    },
   ]
 
   appPreferences = [
