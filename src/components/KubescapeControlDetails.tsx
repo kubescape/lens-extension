@@ -67,7 +67,7 @@ export class KubescapeControlDetails extends React.Component<{ control?: Kubesca
         const relatedObjects = getRelatedObjectsFromControl(this.control.rawResult)
         return await Promise.all(relatedObjects.map(async (entity) => {
             if (entity.metadata?.uid) {
-                const kubeObject = await this.store.getKubeObject(entity.namespace, entity.kind, entity.apiVersion, entity.metadata.uid)
+                const kubeObject = await this.store.getKubeObject(entity.kind, entity.apiVersion, entity.metadata.uid)
                 return new RelatedResource({
                     id: entity.metadata.uid,
                     name: kubeObject.getName(),
@@ -84,7 +84,7 @@ export class KubescapeControlDetails extends React.Component<{ control?: Kubesca
             });
 
             for (let relatedObject of entity.relatedObjects) {
-                const kubeObject = await this.store.getKubeObject(relatedObject.namespace, relatedObject.kind, relatedObject.apiVersion, relatedObject.metadata.uid)
+                const kubeObject = await this.store.getKubeObject(relatedObject.kind, relatedObject.apiVersion, relatedObject.metadata.uid)
                 if (relatedObject.kind.includes("RoleBinding")) {
                     roleBasedResource.roleBinding = new RelatedResource({
                         name: kubeObject.getName(),
