@@ -23,7 +23,7 @@ export class KubescapeWorkloadDetails<T extends Renderer.K8sApi.KubeObject> exte
         return (
             failedControls.length > 0 ?
                 <div>
-                    <DrawerTitle title="Kubescape" />
+                    <DrawerTitle title="Kubescape - Failed Controls" />
                     <KubescapeControlTable
                         columns={columns}
                         controls={failedControls}
