@@ -50,7 +50,7 @@ export class KubescapeReportStore extends Store.ExtensionStore<KubescapeReportSt
     getKubeObject = async (namespace : string, kind: string, apiVersion: string, id: string): Promise<Renderer.K8sApi.KubeObject> => {
         const store = this.getStore(kind, apiVersion);
 
-        if (!store.isLoaded) {
+        if (!store.isLoaded || !store.getById(id)) {
             await store.loadAll({ namespaces: [namespace], merge: false });
         }
 
