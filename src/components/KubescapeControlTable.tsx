@@ -10,7 +10,7 @@ import { prevDefault } from "../utils";
 
 import "./KubescapeControlTable.scss";
 
-const { Component: { TableHead, TableRow, TableCell, Table, Spinner }, } = Renderer;
+const { Component: { TableHead, TableRow, TableCell, Table, Spinner, Tooltip }, } = Renderer;
 
 export enum controlTableColumn {
     id = "id",
@@ -20,7 +20,8 @@ export enum controlTableColumn {
     riskScore = "riskScore",
     severity = "severity",
     description = "description",
-    status = "status"
+    status = "status",
+    remediation = "remediation"
 }
 
 @observer
@@ -30,7 +31,11 @@ export class KubescapeControlTable extends React.Component<{
     controls?: KubescapeControl[],
     nowrap?: boolean,
     sortByDefault: any,
-    disableRowClick?: boolean
+    disableRowClick?: boolean,
+    // [Optional] Add link to docs to the specified column
+    linkToDocsColumnName?: controlTableColumn
+    // [Optional] Add a tooltip with control description to the specified column
+    descriptionTooltipColumnName?: controlTableColumn
 }> {
     constructor(props) {
         super(props);
@@ -49,7 +54,6 @@ export class KubescapeControlTable extends React.Component<{
     }
 
     onRowClick = (item: KubescapeControl) => {
-
         if (item.id == this.selectedControl?.id) {
             this.selectedControl = null;
         } else {
@@ -77,7 +81,7 @@ export class KubescapeControlTable extends React.Component<{
                 id: controlTableColumn.id,
                 title: 'ID',
                 className: 'controlId',
-                value: (control: KubescapeControl) => <a target="_blank" href={docsUrl(control)}>{control.id}</a>
+                value: (control: KubescapeControl) => control.id
             },
             {
                 id: controlTableColumn.name,
@@ -108,8 +112,29 @@ export class KubescapeControlTable extends React.Component<{
                 title: 'Risk Score',
                 className: 'riskScore',
                 value: (control: KubescapeControl) => `${Math.round(control.riskScore)}%`
+            },
+            {
+                id: controlTableColumn.remediation,
+                title: 'Remediation',
+                className: 'remediation',
+                value: (control: KubescapeControl) => control.remediation
             }
         ]
+
+        if (this.props.linkToDocsColumnName) {
+            const column = allColumns.find(col => col.id == this.props.linkToDocsColumnName)
+            const prevVal = column.value
+            column.value = (control: KubescapeControl) => <a target="_blank" href={docsUrl(control)}>{prevVal(control)}</a>
+        }
+
+        if (this.props.descriptionTooltipColumnName) {
+            const column = allColumns.find(col => col.id == this.props.descriptionTooltipColumnName)
+            const prevVal = column.value
+            column.value = (control: KubescapeControl) => <>
+                <span id={control.id}>{prevVal(control)}</span>
+                <Tooltip targetId={control.id}>{control.description}</Tooltip>
+            </>
+        }
 
         if (this.props.columns) {
             return allColumns.filter(col => this.props.columns.includes(col.id));
@@ -153,6 +178,7 @@ export class KubescapeControlTable extends React.Component<{
         [controlTableColumn.severity]: (control: KubescapeControl) => control.severity.value,
         [controlTableColumn.description]: (control: KubescapeControl) => control.description,
         [controlTableColumn.status]: (control: KubescapeControl) => control.status.value * control.severity.value,
+        [controlTableColumn.remediation]: (control: KubescapeControl) => control.remediation,
     };
 
     private getControlString = (control: KubescapeControl): string => {

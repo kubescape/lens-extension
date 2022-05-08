@@ -18,7 +18,7 @@ export class KubescapeWorkloadDetails<T extends Renderer.K8sApi.KubeObject> exte
         const controls = toJS<any[]>(KubescapeReportStore.getInstance().activeClusterReportResult.controls)
         const failedControls = getFailedControlsById(controls, this.props.object.getId())
 
-        const columns = [controlTableColumn.severity, controlTableColumn.id, controlTableColumn.name, controlTableColumn.description];
+        const columns = [controlTableColumn.severity, controlTableColumn.name, controlTableColumn.remediation];
         const sortByDefault = { sortBy: controlTableColumn.id, orderBy: "desc" }
         return (
             failedControls.length > 0 ?
@@ -29,7 +29,9 @@ export class KubescapeWorkloadDetails<T extends Renderer.K8sApi.KubeObject> exte
                         controls={failedControls}
                         nowrap={false}
                         disableRowClick={true}
-                        sortByDefault={sortByDefault} />
+                        sortByDefault={sortByDefault}
+                        linkToDocsColumnName={controlTableColumn.name}
+                        descriptionTooltipColumnName={controlTableColumn.name} />
                 </div>
                 : null
         )
