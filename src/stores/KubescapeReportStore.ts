@@ -46,15 +46,19 @@ export class KubescapeReportStore extends Store.ExtensionStore<KubescapeReportSt
     }
 
 
-    getKubeObject = async (kind: string, apiVersion: string, id: string): Promise<Renderer.K8sApi.KubeObject> => {
-        if (!(kind in this.resourceKindToStore)) {
-            this.resourceKindToStore[kind] = Renderer.K8sApi.apiManager.getStore(Renderer.K8sApi.apiManager.getApiByKind(kind, apiVersion)) as Renderer.K8sApi.KubeObjectStore<Renderer.K8sApi.KubeObject>;
+    getKubeObject = async (namespace: string, kind: string, apiVersion: string, id: string): Promise<Renderer.K8sApi.KubeObject> => {
+        let store;
+        switch (kind) {
+            case "Role":
+                store = Renderer.K8sApi.apiManager.getStore(Renderer.K8sApi.roleApi) as Renderer.K8sApi.RolesStore;
+                break;
+            default:
+                store = Renderer.K8sApi.apiManager.getStore(Renderer.K8sApi.apiManager.getApiByKind(kind, apiVersion)) as Renderer.K8sApi.KubeObjectStore<Renderer.K8sApi.KubeObject>;
         }
-
-        const store = this.resourceKindToStore[kind];
-        if (!store.isLoaded) {
-            await store.loadAll();
-        }
+       
+        await store.loadAll({ namespaces: [namespace], merge: false });
+        console.error(kind, apiVersion, id);
+        console.error(store);
 
         return store.getById(id);
     }
