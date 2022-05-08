@@ -1,7 +1,7 @@
-# Kubescape extension for Lens
+# Kubescape Lens Extension
 
-This extension bring out the power of kubescape into Lens so managing cluster
-was never simpler and safer.
+This extension bring out the power of [Kubescape][kubescape] into [Lens][lens] so managing cluster was never simpler and safer.
+
 
 ## Install
 
@@ -46,3 +46,8 @@ rm ~/.k8slens/extensions/kubescape
 ```
 
 Restart Lens application.
+
+[lens]: https://github.com/lensapp/lens
+[kubescape]: https://github.com/armosec/kubescape
+[license]: https://github.com/armosec/lens-kubescape/blob/master/LICENSE
+[license-img]: https://img.shields.io/github/license/armosec/lens-kubescape
