@@ -1,7 +1,8 @@
 import { Common, Renderer } from "@k8slens/extensions";
-import { observable, makeObservable, computed, action } from "mobx";
+import { observable, makeObservable, computed } from "mobx";
 import { KubescapeReportStoreModel, KubescapeClusterScanResult, KubescapeControl } from "../kubescape/types";
 import { toKubescapeControl } from "../kubescape/controlUtils";
+
 const { Store } = Common;
 
 
@@ -36,11 +37,6 @@ export class KubescapeReportStore extends Store.ExtensionStore<KubescapeReportSt
 
     @computed get isScanReady() {
         return this.activeClusterReportResult && this.activeClusterReportResult.controls;
-    }
-
-    @action scanCluster = () => {
-        const filtered = this.scanResults.filter(result => result.clusterId != this.activeClusterId);
-        this.scanResults = filtered;
     }
 
     getStore = (kind, apiVersion) => {

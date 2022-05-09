@@ -1,7 +1,7 @@
 import React from "react";
 
 import { Renderer } from "@k8slens/extensions";
-import { observable, computed, makeObservable } from "mobx";
+import { observable, computed, makeObservable, action } from "mobx";
 import { observer } from "mobx-react"
 import { KubescapeControlTable, KubescapeIcon, controlTableColumn } from ".";
 import { KubescapePreferenceStore, KubescapeReportStore } from "../stores";
@@ -9,6 +9,8 @@ import { KubescapePreferenceStore, KubescapeReportStore } from "../stores";
 const { Component: { Button, Icon, TabLayout, SearchInput } } = Renderer;
 
 import "./ClusterPage.scss";
+import { IpcRenderer } from "../ipc/renderer";
+import { scanClusterTask } from "../kubescape/clusterScan";
 
 export function ClusterPageIcon(props: Renderer.Component.IconProps) {
     return <Renderer.Component.Icon><KubescapeIcon fill="currentColor" size="16" {...props} /></Renderer.Component.Icon>
@@ -23,14 +25,24 @@ export class ClusterPage extends React.Component {
 
     @observable controlTableSearch = "";
 
-    @computed get isInstalled() { return KubescapePreferenceStore.getInstance().isInstalled; }
-    @computed get config() { return KubescapePreferenceStore.getInstance().kubescapeConfig; }
-    @computed get store() { return KubescapeReportStore.getInstance(); }
+    @computed get preferenceStore() { return KubescapePreferenceStore.getInstance(); }
+    @computed get reportStore() { return KubescapeReportStore.getInstance(); }
+    @computed get ipc() { return  IpcRenderer.getInstance(); }
+
+    @computed get isInstalled() { return this.preferenceStore.isInstalled; }
+    @computed get config() { return this.preferenceStore.kubescapeConfig; }
 
     @computed get scanTime() {
         const options = { year: 'numeric', month: 'numeric', day: 'numeric', hour: 'numeric', minute: 'numeric' } as const;
-        return (new Date(this.store.activeClusterReportResult.time)).toLocaleTimeString('en-US', options);
+        return (new Date(this.reportStore.activeClusterReportResult.time)).toLocaleTimeString('en-US', options);
     }
+
+    @action scanCluster = async () => {
+        const filtered = this.reportStore.scanResults.filter(result => result.clusterId != this.reportStore.activeClusterId);
+        this.reportStore.scanResults = filtered;
+        await scanClusterTask(this.preferenceStore, this.reportStore, this.ipc);
+    }
+
 
     configInfo = () => {
         if (!this.isInstalled) {
@@ -68,7 +80,7 @@ export class ClusterPage extends React.Component {
                         <Icon material="info" tooltip={this.configInfo()} />
                     </h2>
                     <div className="controls">
-                        {this.store.isScanReady ?
+                        {this.reportStore.isScanReady ?
                             <SearchInput
                                 value={this.controlTableSearch}
                                 theme="round-black"
@@ -79,13 +91,13 @@ export class ClusterPage extends React.Component {
                         }
                         <Button
                             label='Scan'
-                            onClick={this.store.scanCluster}
+                            onClick={this.scanCluster}
                             primary
-                            waiting={!this.store.isScanReady}
-                            disabled={!this.store.isScanReady}
+                            waiting={!this.reportStore.isScanReady}
+                            disabled={!this.reportStore.isScanReady}
                             hidden={!this.isInstalled}
                         />
-                        {this.store.isScanReady ?
+                        {this.reportStore.isScanReady ?
                             <div><i><div>Last scan: </div><div>{this.scanTime}</div></i></div>
                             : null
                         }
