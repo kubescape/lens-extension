@@ -128,6 +128,7 @@ export default class KubescapeExtension extends Renderer.LensExtension {
     reportStore.loadExtension(this);    
 
     this.disposers.push(reaction(() => Renderer.Catalog.catalogEntities.activeEntity, async () => await scanClusterTask(preferenceStore, reportStore, ipc)));
+    this.disposers.push(reaction(() => preferenceStore.isInstalled, async () => await scanClusterTask(preferenceStore, reportStore, ipc)));
   }
 
   async onDeactivate() {
