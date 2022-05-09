@@ -1,6 +1,6 @@
 # Kubescape Lens Extension
 
-This extension bring out the power of [Kubescape][kubescape] into [Lens][lens] so managing cluster was never simpler and safer.
+This extension brings out the power of [Kubescape][kubescape] into [Lens][lens] so managing cluster was never simpler and safer.
 
 [![License][license-img]][license]
 
@@ -20,6 +20,35 @@ This extension bring out the power of [Kubescape][kubescape] into [Lens][lens] s
 
 
 <img src="docs/installation.gif"> 
+
+
+## Getting Started
+
+Kubescape extension for Lens will help you to easily scan and detect misconfigurations, software vulnerabilities, and RBAC (role-based-access-control) violations in your K8S cluster.
+
+#### Cluster-level information
+
+* Navigate to `Kubescape` from the side menu.
+* A Kubescape scan runs automatically on your cluster for the first time. You can also run a scan on-demand by clicking the __Scan__ button.
+* The table reflects a cluster-level summary of kubescape scan results.
+
+<img src="docs/scan-results.png"> 
+
+<br />
+
+* To find out more information on a specific Kubescape control and its failed resources, click on it to open the side bar for a detailed view:
+
+<img src="docs/cluster-level-info.png"> 
+
+#### Object-level information
+
+* Kubescape information is also available at the object level. Click on the desired resource to open the details side bar and scroll down for Kubescape section:
+
+>_This view shows only failed controls. If you don't see any that's a good thing :)_
+
+<img src="docs/object-level-info.png"> 
+
+
 
 ## Development mode
 
@@ -64,17 +93,15 @@ To reflect your source code changes, reload the Lens window by pressing <kbd>Com
 
 <img src="docs/development.gif"> 
 
-## Test
+### Uninstall
 
-Open Lens application and navigate to a cluster. You should see "Kubescape" in a menu.
-
-## Uninstall
-
+1. Remove the link:
 ```sh
 rm ~/.k8slens/extensions/kubescape
 ```
 
-Restart Lens application.
+2. Restart Lens application.
+
 
 [lens]: https://github.com/lensapp/lens
 [kubescape]: https://github.com/armosec/kubescape
