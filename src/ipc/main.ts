@@ -13,7 +13,7 @@ export class IpcMain extends Main.Ipc {
 }
 
 async function onScanCluster(event: IpcRendererEvent, clusterName: string) {
-    Logger.debug(`Recieved scan cluster event for '${clusterName}'`);
+    Logger.debug(`Received scan cluster event for '${clusterName}'`);
     const kubescapeApi = KubescapeApi.instance
     const result = await kubescapeApi.scanCluster(new LensUI , clusterName);
     Logger.debug(`Scan completed for cluster ${clusterName}`);
