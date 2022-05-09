@@ -17,6 +17,8 @@ This extension bring out the power of [Kubescape][kubescape] into [Lens][lens] s
 
 3. Click on the __Install__ button.
 
+
+
 <img src="docs/installation.gif"> 
 
 ## Development mode
