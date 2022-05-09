@@ -17,6 +17,8 @@ This extension bring out the power of [Kubescape][kubescape] into [Lens][lens] s
 
 3. Click on the __Install__ button.
 
+<img src="docs/installation.gif"> 
+
 ## Development mode
 
 > You must have a working [Node.js][nodejs] environment.
@@ -56,6 +58,9 @@ npm start
 
 
 To reflect your source code changes, reload the Lens window by pressing <kbd>Command</kbd>+<kbd>R</kbd> (macOS). Note: Any changes which affect Len's main thread will require a restart to the Lens application.
+
+
+<img src="docs/development.gif"> 
 
 ## Test
 
