@@ -5,6 +5,11 @@ function parseScanResult(scanResult: any) {
     const controls = {};
     const frameworks = [];
     
+    if (Object.keys(scanResult).length <= 0) {
+        Logger.debug({ msg: "Scan cluster ended with no results", result: scanResult })
+        return [[], []]
+    }
+
     for (let framework of scanResult) {
         const { controlReports, ...frameworkData } = framework
         for (let control of controlReports) {
