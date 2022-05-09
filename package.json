@@ -1,6 +1,6 @@
 {
-  "name": "@kubescape/lens-kubescape",
-  "version": "0.0.1",
+  "name": "@kubescape/lens-extension",
+  "version": "0.1.0",
   "author": {
     "name": "Kubescape Team at Armo"
   },
@@ -13,7 +13,7 @@
   "description": "Kubescape extension for Lens",
   "repository": {
     "type": "git",
-    "url": "https://github.com/armosec/lens-kubescape.git",
+    "url": "git+https://github.com/armosec/lens-kubescape.git",
     "directory": "."
   },
   "engines": {
