@@ -3,6 +3,8 @@
 This extension brings out the power of [Kubescape][kubescape] into [Lens][lens] so managing cluster was never simpler and safer.
 
 [![License][license-img]][license]
+![GitHub Workflow Status](https://img.shields.io/github/workflow/status/armosec/lens-kubescape/publish)
+![GitHub package.json version](https://img.shields.io/github/package-json/v/armosec/lens-kubescape)
 
 ## Prerequisites
 
