@@ -51,21 +51,21 @@ function calculateStatus(control: any): ControlStatus {
             return {
                 title: 'Passed',
                 icon: 'check_circle_outline',
-                value: 0.1,
+                value: 1,
                 color: "#23a71b"
             }
         }
         return {
             title: 'Skipped/Irrelevant',
             icon: 'help_outline',
-            value: 0.1,
+            value: 0,
             color: 'gray'
         }
     }
     return {
         title: 'Failed',
         icon: 'highlight_off',
-        value: 1,
+        value: 10,
         color: "#e1449f"
     }
 }
