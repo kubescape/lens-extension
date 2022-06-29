@@ -10,66 +10,66 @@ export class KubescapeReportStore extends Store.ExtensionStore<KubescapeReportSt
     @observable scanResults: KubescapeClusterScanResult[] = [];
 
     @computed get activeCluster() {
-        const activeEntity = Renderer.Catalog.catalogEntities.activeEntity;
-        if (activeEntity && activeEntity instanceof Common.Catalog.KubernetesCluster) {
-            return activeEntity;
-        }
-        return null;
+      const activeEntity = Renderer.Catalog.catalogEntities.activeEntity;
+      if (activeEntity && activeEntity instanceof Common.Catalog.KubernetesCluster) {
+        return activeEntity;
+      }
+      return null;
     }
 
     @computed get activeClusterId() {
-        return this.activeCluster?.getId() ?? null;
+      return this.activeCluster?.getId() ?? null;
     }
 
     @computed get activeClusterReportResult() {
-        if (!this.activeClusterId) {
-            return null;
-        }
-        return this.scanResults.find(result => result.clusterId == this.activeClusterId);
+      if (!this.activeClusterId) {
+        return null;
+      }
+      return this.scanResults.find(result => result.clusterId == this.activeClusterId);
     }
 
     @computed get kubescapeControls(): KubescapeControl[] {
-        if (!this.activeClusterReportResult || !this.activeClusterReportResult.controls) {
-            return null;
-        }
-        return this.activeClusterReportResult.controls.map(control => toKubescapeControl(control));
+      if (!this.activeClusterReportResult || !this.activeClusterReportResult.controls) {
+        return null;
+      }
+      return this.activeClusterReportResult.controls.map(control => toKubescapeControl(control));
     }
 
     @computed get isScanReady() {
-        return this.activeClusterReportResult && this.activeClusterReportResult.controls;
+      return this.activeClusterReportResult && this.activeClusterReportResult.controls;
     }
 
     getStore = (kind, apiVersion) => {
-        return Renderer.K8sApi.apiManager.getStore(Renderer.K8sApi.apiManager.getApiByKind(kind, apiVersion)) as Renderer.K8sApi.KubeObjectStore<Renderer.K8sApi.KubeObject>;
+      return Renderer.K8sApi.apiManager.getStore(Renderer.K8sApi.apiManager.getApiByKind(kind, apiVersion)) as Renderer.K8sApi.KubeObjectStore<Renderer.K8sApi.KubeObject>;
     }
 
     getKubeObject = async (namespace : string, kind: string, apiVersion: string, id: string): Promise<Renderer.K8sApi.KubeObject> => {
-        const store = this.getStore(kind, apiVersion);
+      const store = this.getStore(kind, apiVersion);
 
-        if (!store.isLoaded || !store.getById(id)) {
-            await store.loadAll({ namespaces: [namespace], merge: false });
-        }
+      if (!store.isLoaded || !store.getById(id)) {
+        await store.loadAll({ namespaces: [namespace], merge: false });
+      }
 
-        return store.getById(id);
+      return store.getById(id);
     }
 
     constructor() {
-        super({
-            configName: "kubescape-report-store",
-            defaults: {
-                scanResults: []
-            }
-        });
-        makeObservable(this);
+      super({
+        configName: "kubescape-report-store",
+        defaults: {
+          scanResults: []
+        }
+      });
+      makeObservable(this);
     }
 
     protected fromStore({ scanResults }: KubescapeReportStoreModel): void {
-        this.scanResults = scanResults
+      this.scanResults = scanResults
     }
 
     toJSON(): KubescapeReportStoreModel {
-        return {
-            scanResults: this.scanResults
-        };
+      return {
+        scanResults: this.scanResults
+      };
     }
 }

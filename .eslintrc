@@ -26,6 +26,16 @@
     "rules": {
         "indent": ["error", 2],
         "linebreak-style": ["error","unix"],
-        "quotes": ["error", "double"]
+        "quotes": ["error", "double"],
+        "@typescript-eslint/no-explicit-any": "off",
+        "@typescript-eslint/ban-types": [
+          "error",
+          {
+            "extendDefaults": true,
+            "types": {
+              "{}": false
+            }
+          }
+        ]
     }
 }

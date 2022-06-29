@@ -10,28 +10,28 @@ export type KubescapePreferenceStoreModel = {
 
 export class KubescapePreferenceStore extends Store.ExtensionStore<KubescapePreferenceStoreModel>{
     @observable kubescapeConfig: IKubescapeConfig = null;
-    @observable isInstalled: boolean = false;
+    @observable isInstalled = false;
 
     constructor() {
-        super({
-            configName: "kubescape-preference-store",
-            defaults: {
-                isInstalled: false,
-                kubescapeConfig: null,
-            }
-        });
-        makeObservable(this);
+      super({
+        configName: "kubescape-preference-store",
+        defaults: {
+          isInstalled: false,
+          kubescapeConfig: null,
+        }
+      });
+      makeObservable(this);
     }
 
     protected fromStore({ kubescapeConfig, isInstalled }: KubescapePreferenceStoreModel): void {
-        this.kubescapeConfig = kubescapeConfig;
-        this.isInstalled = isInstalled;
+      this.kubescapeConfig = kubescapeConfig;
+      this.isInstalled = isInstalled;
     }
 
     toJSON(): KubescapePreferenceStoreModel {
-        return {
-            kubescapeConfig: this.kubescapeConfig,
-            isInstalled: this.isInstalled
-        };
+      return {
+        kubescapeConfig: this.kubescapeConfig,
+        isInstalled: this.isInstalled
+      };
     }
 }
