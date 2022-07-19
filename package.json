@@ -1,6 +1,6 @@
 {
   "name": "@kubescape/lens-extension",
-  "version": "0.1.6",
+  "version": "0.1.7",
   "author": {
     "name": "Kubescape Team at Armo"
   },
@@ -27,7 +27,7 @@
     "clean": "rm -rf ./dist"
   },
   "dependencies": {
-    "@kubescape/install": "^0.3.8",
+    "@kubescape/install": "^0.3.9",
     "abort-controller": "^3.0.0",
     "node-fetch": "^2.6.0"
   },

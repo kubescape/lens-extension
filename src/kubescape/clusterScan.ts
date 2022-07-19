@@ -1,4 +1,5 @@
 import { Renderer, Common } from "@k8slens/extensions";
+import { KubernetesCluster } from "@k8slens/extensions/dist/src/common/catalog-entities";
 import { Logger, SCAN_CLUSTER_EVENT_NAME } from "../utils";
 
 function parseScanResult(scanResult: any) {
@@ -57,7 +58,9 @@ export async function scanClusterTask(preferenceStore, reportStore, ipc) {
   }
 
   Logger.debug(`Invoking cluster scan on '${clusterName}'`);
-  const scanClusterResult = await ipc.invoke(SCAN_CLUSTER_EVENT_NAME, clusterName);
+  
+  const kubeconfigPath = (<KubernetesCluster>activeEntity).spec.kubeconfigPath
+  const scanClusterResult = await ipc.invoke(SCAN_CLUSTER_EVENT_NAME, clusterName, kubeconfigPath);
   const [controls, frameworks] = parseScanResult(scanClusterResult);
 
   scanResult = reportStore.scanResults.find(result => result.clusterId == clusterId);

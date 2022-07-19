@@ -12,10 +12,10 @@ export class IpcMain extends Main.Ipc {
   }
 }
 
-async function onScanCluster(event: IpcRendererEvent, clusterName: string) {
-  Logger.debug(`Received scan cluster event for '${clusterName}'`);
+async function onScanCluster(event: IpcRendererEvent, clusterName: string, kubeconfigPath?: string) {
+  Logger.debug(`Received scan cluster event for '${clusterName}' (kubeconfig path = ${kubeconfigPath})`);
   const kubescapeApi = KubescapeApi.instance
-  const result = await kubescapeApi.scanCluster(new LensUI() , clusterName);
+  const result = await kubescapeApi.scanCluster(new LensUI() , clusterName, kubeconfigPath);
   Logger.debug(`Kubescape scan result for cluster '${clusterName}': ` + JSON.stringify(result));
   Logger.debug(`Scan completed for cluster ${clusterName}`);
   return result;
