@@ -60,14 +60,17 @@ export async function scanClusterTask(preferenceStore, reportStore, ipc) {
   Logger.debug(`Invoking cluster scan on '${clusterName}'`);
   
   const kubeconfigPath = (<KubernetesCluster>activeEntity).spec.kubeconfigPath
-  const scanClusterResult = await ipc.invoke(SCAN_CLUSTER_EVENT_NAME, clusterName, kubeconfigPath);
+  const kubeconfigContext = (<KubernetesCluster>activeEntity).spec.kubeconfigContext
+  const scanClusterResult = await ipc.invoke(SCAN_CLUSTER_EVENT_NAME, kubeconfigContext, kubeconfigPath);
+  console.debug(scanClusterResult);
+
   const [controls, frameworks] = parseScanResult(scanClusterResult);
 
   scanResult = reportStore.scanResults.find(result => result.clusterId == clusterId);
 
   if (scanResult) {
     // Update Store
-    scanResult.rawResult = scanClusterResult;
+    scanResult.rawResult = ""; // commented out to reduce size of file
     scanResult.controls = controls;
     scanResult.frameworks = frameworks;
 

@@ -34,6 +34,11 @@ export default class KubescapeExtensionMain extends Main.LensExtension {
     if (!preferenceStore.kubescapeConfig) {
       preferenceStore.kubescapeConfig = defaultConfig;
     }
+    if (preferenceStore.kubescapeConfig.version != DEFAULT_KUBESCAPE_VERSION) {
+      Logger.info(`Kubescape existing version (${preferenceStore.kubescapeConfig.version})is different than the default (${DEFAULT_KUBESCAPE_VERSION}). Upgrading.`)
+      preferenceStore.kubescapeConfig.version = DEFAULT_KUBESCAPE_VERSION
+    }
+    
     const kubescapeOK = await kubescapeApi.setup(new LensUI, preferenceStore.kubescapeConfig)
 
     if (kubescapeOK) {
