@@ -8,8 +8,13 @@ This extension brings out the power of [Kubescape][kubescape] into [Lens][lens] 
 
 ## Prerequisites
 
-* Lens minimum [5.4.0][lens-version] should first be [installed][lens-installation] on your workstation.
+* Lens should be [installed][lens-installation] on your workstation. Please consult the following support matrix for version compatibility:
 
+  | Lens | Kubescape Extension |
+  |------|---------------------|
+  | 5.4  | 0.1.x               |
+  | 5.5  | 0.1.x               |
+  | 6.0  | 0.2.x               |
 
 ## Installation
 
@@ -110,5 +115,4 @@ rm ~/.k8slens/extensions/kubescape
 [license]: https://github.com/armosec/lens-kubescape/blob/master/LICENSE
 [license-img]: https://img.shields.io/github/license/armosec/lens-kubescape
 [nodejs]: https://www.nodejs.org/en/
-[lens-version]: https://github.com/lensapp/lens/releases/tag/v5.4.6
 [lens-installation]: https://github.com/lensapp/lens#installation

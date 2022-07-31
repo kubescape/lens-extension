@@ -123,7 +123,7 @@ export class KubescapeControlDetails extends React.Component<{ control?: Kubesca
       </>);
     }
 
-    navigationLink = (resource: RelatedResource) => <a href="#" onClick={() => Renderer.Navigation.navigate(resource.detailsUrl)}>{resource.name}</a>
+    navigationLink = (resource: RelatedResource) => <a href="#" onClick={(e) => {e.preventDefault(); Renderer.Navigation.navigate(resource.detailsUrl); this.props.onClose()}}>{resource.name}</a>
 
     @computed get failedResourcesTable() {
       if (!this.failedResources || this.failedResources.length == 0) {

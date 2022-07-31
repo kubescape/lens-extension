@@ -70,7 +70,7 @@ export async function scanClusterTask(preferenceStore, reportStore, ipc) {
 
   if (scanResult) {
     // Update Store
-    scanResult.rawResult = ""; // commented out to reduce size of file
+    //scanResult.rawResult = ""; // commented out to reduce size of file
     scanResult.controls = controls;
     scanResult.frameworks = frameworks;
 
