@@ -1,6 +1,6 @@
 {
   "name": "@kubescape/lens-extension",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "author": {
     "name": "Kubescape Team at Armo"
   },
@@ -41,11 +41,9 @@
     "file-loader": "^6.2.0",
     "mobx": "^6.6.1",
     "mobx-react": "^7.5.2",
-    "node-sass": "^7.0.1",
     "prop-types": "^15.8.1",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
-    "react-scripts": "^5.0.1",
     "sass": "^1.54.0",
     "sass-loader": "^13.0.2",
     "style-loader": "^3.3.1",
