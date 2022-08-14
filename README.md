@@ -66,20 +66,20 @@ Kubescape extension for Lens will help you to easily scan and detect misconfigur
 ```sh
 git clone https://github.com/kubescape/lens-extension.git 
 mkdir -p ~/.k8slens/extensions
-ln -s $(pwd)/lens-kubescape ~/.k8slens/extensions/kubescape
+ln -s $(pwd)/lens-extension ~/.k8slens/extensions/kubescape
 ```
 
 2. Install dependencies and build the extension by running `make` or `npm` commands:
 
 ```sh
-cd lens-kubescape
+cd lens-extension
 make build
 ```
 
 __OR__
 
 ```sh
-cd lens-kubescape
+cd lens-extension
 npm install
 npm run build
 ```
