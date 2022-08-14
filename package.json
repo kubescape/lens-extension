@@ -13,7 +13,7 @@
   "description": "Kubescape extension for Lens",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/armosec/lens-kubescape.git",
+    "url": "git+https://github.com/kubescape/lens-extension.git",
     "directory": "."
   },
   "engines": {
