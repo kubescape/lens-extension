@@ -3,8 +3,8 @@
 This extension brings out the power of [Kubescape][kubescape] into [Lens][lens] so managing cluster was never simpler and safer.
 
 [![License][license-img]][license]
-![GitHub Workflow Status](https://img.shields.io/github/workflow/status/armosec/lens-kubescape/publish)
-![GitHub package.json version](https://img.shields.io/github/package-json/v/armosec/lens-kubescape)
+![GitHub Workflow Status](https://img.shields.io/github/workflow/status/kubescape/lens-extension/publish)
+![GitHub package.json version](https://img.shields.io/github/package-json/v/kubescape/lens-extension)
 
 ## Prerequisites
 
@@ -64,7 +64,7 @@ Kubescape extension for Lens will help you to easily scan and detect misconfigur
 1. Clone the repository and then link to it:
 
 ```sh
-git clone https://github.com/armosec/lens-kubescape.git 
+git clone https://github.com/kubescape/lens-extension.git 
 mkdir -p ~/.k8slens/extensions
 ln -s $(pwd)/lens-kubescape ~/.k8slens/extensions/kubescape
 ```
@@ -112,7 +112,7 @@ rm ~/.k8slens/extensions/kubescape
 
 [lens]: https://github.com/lensapp/lens
 [kubescape]: https://github.com/armosec/kubescape
-[license]: https://github.com/armosec/lens-kubescape/blob/master/LICENSE
-[license-img]: https://img.shields.io/github/license/armosec/lens-kubescape
+[license]: https://github.com/kubescape/lens-extension/blob/master/LICENSE
+[license-img]: https://img.shields.io/github/license/kubescape/lens-extension
 [nodejs]: https://www.nodejs.org/en/
 [lens-installation]: https://github.com/lensapp/lens#installation
