@@ -1,7 +1,7 @@
 import React from "react";
 
 import { Renderer } from "@k8slens/extensions";
-import { observable, makeObservable, computed, reaction, runInAction } from "mobx";
+import { observable, makeObservable, computed, reaction, runInAction, toJS } from "mobx";
 import { disposeOnUnmount, observer } from "mobx-react"
 import { KubescapeControl } from "../kubescape/types";
 import { docsUrl, getRelatedObjectsFromControl } from "../kubescape/controlUtils";
@@ -64,16 +64,16 @@ export class KubescapeControlDetails extends React.Component<{ control?: Kubesca
         return null;
       }
 
-      const relatedObjects = getRelatedObjectsFromControl(this.control.rawResult)
+      const relatedObjects = getRelatedObjectsFromControl(this.control, this.store.kubescapeResultMap, this.store.kubescapeRawResourceMap)
       return await Promise.all(relatedObjects.map(async (entity) => {
         if (entity.metadata?.uid) {
           const kubeObject = await this.store.getKubeObject(entity.metadata.namespace, entity.kind, entity.apiVersion, entity.metadata.uid)
           return new RelatedResource({
             id: entity.metadata.uid,
-            name: kubeObject.getName(),
-            kind: kubeObject.kind,
-            namespace: kubeObject.metadata.namespace,
-            detailsUrl: Renderer.Navigation.getDetailsUrl(kubeObject.selfLink)
+            name: entity.metadata.name,
+            kind: entity.kind,
+            namespace: entity.metadata.namespace,
+            detailsUrl: kubeObject ? Renderer.Navigation.getDetailsUrl(kubeObject.selfLink) : null
           });
         }
 
@@ -87,13 +87,13 @@ export class KubescapeControlDetails extends React.Component<{ control?: Kubesca
           const kubeObject = await this.store.getKubeObject(relatedObject.metadata.namespace, relatedObject.kind, relatedObject.apiVersion, relatedObject.metadata.uid)
           if (relatedObject.kind.includes("RoleBinding")) {
             roleBasedResource.roleBinding = new RelatedResource({
-              name: kubeObject.getName(),
-              detailsUrl: Renderer.Navigation.getDetailsUrl(kubeObject.selfLink)
+              name: kubeObject?.getName() ?? relatedObject.metadata.name,
+              detailsUrl: kubeObject ? Renderer.Navigation.getDetailsUrl(kubeObject.selfLink) : null
             });
           } else {
             roleBasedResource.role = new RelatedResource({
-              name: kubeObject.getName(),
-              detailsUrl: Renderer.Navigation.getDetailsUrl(kubeObject.selfLink)
+              name: kubeObject?.getName() ?? relatedObject.metadata.name,
+              detailsUrl: kubeObject ? Renderer.Navigation.getDetailsUrl(kubeObject.selfLink) : null
             });
           }
         }
@@ -123,7 +123,7 @@ export class KubescapeControlDetails extends React.Component<{ control?: Kubesca
       </>);
     }
 
-    navigationLink = (resource: RelatedResource) => <a href="#" onClick={(e) => {e.preventDefault(); Renderer.Navigation.navigate(resource.detailsUrl); this.props.onClose()}}>{resource.name}</a>
+    navigationLink = (resource: RelatedResource) => resource.detailsUrl ? <a href="#" onClick={(e) => {e.preventDefault(); Renderer.Navigation.navigate(resource.detailsUrl); this.props.onClose()}}>{resource.name}</a> : resource.name
 
     @computed get failedResourcesTable() {
       if (!this.failedResources || this.failedResources.length == 0) {
@@ -148,7 +148,7 @@ export class KubescapeControlDetails extends React.Component<{ control?: Kubesca
       }
 
       return (<><DrawerTitle>Failed Resources</DrawerTitle>
-        <Table>
+        <Table scrollable={false}>
           <TableHead>{columns.map(col => <TableCell>{col.title}</TableCell>)}</TableHead>
           {this.failedResources.map(resource => <TableRow>{columns.map(col => <TableCell>{col.value(resource)}</TableCell>)}</TableRow>)}
         </Table>

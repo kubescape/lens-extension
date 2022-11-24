@@ -1,6 +1,6 @@
 {
   "name": "@kubescape/lens-extension",
-  "version": "0.2.3",
+  "version": "0.2.4",
   "author": {
     "name": "Kubescape Team at Armo"
   },
@@ -27,27 +27,27 @@
     "clean": "rm -rf ./dist"
   },
   "dependencies": {
-    "@kubescape/install": "^0.3.11",
+    "@kubescape/install": "^0.4.0",
     "abort-controller": "^3.0.0",
-    "node-fetch": "^2.6.7"
+    "node-fetch": "^3.3.0"
   },
   "devDependencies": {
-    "@k8slens/extensions": "^6.0.0",
-    "@types/node": "^18.6.2",
+    "@k8slens/extensions": "^6.1.9",
+    "@types/node": "^14.17.14",
     "@types/node-fetch": "^2.6.2",
-    "@types/react": "^18.0.9",
-    "@types/react-dom": "^17.0.2",
+    "@types/react": "^17.0.45",
+    "@types/react-dom": "^17.0.16",
     "css-loader": "^6.7.1",
     "file-loader": "^6.2.0",
-    "mobx": "^6.6.1",
-    "mobx-react": "^7.5.2",
+    "mobx": "^6.5.0",
+    "mobx-react": "^7.6.0",
     "prop-types": "^15.8.1",
-    "react": "^17.0.2",
-    "react-dom": "^17.0.2",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
     "sass": "^1.54.0",
     "sass-loader": "^13.0.2",
     "style-loader": "^3.3.1",
-    "ts-loader": "^9.3.1",
+    "ts-loader": "^9.4.1",
     "typescript": "^4.0.3",
     "url-loader": "^4.1.1",
     "webpack": "^5.74.0",

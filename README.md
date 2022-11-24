@@ -15,6 +15,7 @@ This extension brings out the power of [Kubescape][kubescape] into [Lens][lens] 
   | 5.4  | 0.1.x               |
   | 5.5  | 0.1.x               |
   | 6.0  | 0.2.x               |
+  | 6.1  | 0.2.x               |
 
 ## Installation
 

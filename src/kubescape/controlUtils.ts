@@ -1,3 +1,5 @@
+import { json } from "@k8slens/extensions/dist/src/common/utils"
+import { toJS } from "mobx"
 import { KubescapeControl, Severity, ControlStatus } from "./types"
 
 const SeverityCritical = "Critical"
@@ -7,7 +9,7 @@ const SeverityLow = "Low"
 const SeverityUnknown = "Unknown"
 
 function calculateSeverity(control: any): Severity {
-  const baseScore = control.baseScore
+  const baseScore = control.scoreFactor
   if (baseScore >= 9) {
     return {
       name: SeverityCritical,
@@ -43,79 +45,94 @@ function calculateSeverity(control: any): Severity {
   }
 }
 
+Object.defineProperty(String.prototype, 'capitalize', {
+  value: function() {
+    return this.charAt(0).toUpperCase() + this.slice(1);
+  },
+  enumerable: false
+});
+
+
 function calculateStatus(control: any): ControlStatus {
-  if (control.failedResources == 0) {
-    if (control.totalResources > 0) {
-      return {
-        title: "Passed",
-        icon: "check_circle_outline",
-        value: 1,
-        color: "#23a71b"
-      }
-    }
+  if (control.statusInfo.status == "passed") {
     return {
-      title: "Skipped/Irrelevant",
-      icon: "help_outline",
-      value: 0,
-      color: "gray"
+      title: "Passed",
+      icon: "check_circle_outline",
+      value: 1,
+      color: "#23a71b"
     }
   }
+
+  if (control.statusInfo.status == "failed") {
+    return {
+      title: "Failed",
+      icon: "highlight_off",
+      value: 10,
+      color: "#e1449f"
+    }
+  }
+
   return {
-    title: "Failed",
-    icon: "highlight_off",
-    value: 10,
-    color: "#e1449f"
+    title: control.statusInfo.status.capitalize(),
+    icon: "help_outline",
+    value: 0,
+    color: "gray"
   }
 }
 
 
 export function toKubescapeControl(control: any): KubescapeControl {
   return {
-    id: control.id,
+    id: control.controlID,
     name: control.name,
-    failedResources: control.failedResources,
-    allResources: control.totalResources,
+    failedResources: control.ResourceCounters.failedResources,
+    allResources: totalResources(control),
     riskScore: control.score,
     description: control.description,
     remediation: control.remediation,
     severity: calculateSeverity(control),
     status: calculateStatus(control),
-    rawResult: control,
+    relatedResourceIds: Object.keys(control.resourceIDs)
   }
 }
 
-export function getFailedControlsById(controls: any[], id: string): KubescapeControl[] {
-  return controls.filter(control =>
-    control.failedResources > 0 && control.ruleReports?.some(report =>
-      report.failedResources > 0 && report.ruleResponses?.some(response =>
-        response.alertObject.k8sApiObjects.some(k8sObj => {
-          if (k8sObj.apiVersion) {
-            return k8sObj.metadata.uid == id
-          }
-          return k8sObj.apiGroup ?
-            k8sObj.relatedObjects.some(relatedObj => relatedObj.metadata.uid == id) : false
-        }))
-    )
-  ).map(control => toKubescapeControl(control));
+export function totalResources(control: any): number {
+  let total = 0
+  for (const key in control.ResourceCounters) {
+    total += control.ResourceCounters[key]
+  }
+  return total
 }
 
-export function getRelatedObjectsFromControl(control: any): any[] {
-  const result: any[] = []
-
-  control.ruleReports?.forEach(report => {
-    if (report.failedResources > 0) {
-      report.ruleResponses?.forEach(response => {
-        if (response.ruleStatus == "failed") {
-          response.alertObject.k8sApiObjects.forEach(k8sObj => {
-            result.push(k8sObj)
-          })
-        }
-      })
+export function getResourceIdByUid(rawResourcesMap: any, id: string): string {
+  for (let key of Object.keys(rawResourcesMap)) {
+    if (rawResourcesMap[key]?.metadata?.uid === id) {
+      return key
     }
+  }
+
+  return null
+}
+
+export function getRelatedObjectsFromControl(control: KubescapeControl, resourceIdToResultMap: any, resourceIdToRawResourceMap: any): any[] {
+  const relatedObjects: any[] = []
+  control.relatedResourceIds.map((resourceId) => {
+    const results = resourceIdToResultMap[resourceId]
+    results.map((resultObject: any) => {
+      if (resultObject.controlID == control.id && isFailedResult(resultObject)) {
+        const rawResource = resourceIdToRawResourceMap[resourceId]
+        relatedObjects.push(toJS(rawResource))
+     }
+    })
   })
-  return result
+
+  return relatedObjects
+}
+
+export function isFailedResult(resultObject: any): boolean {
+  return resultObject.rules.some(rule => rule.status == 'failed' && !rule.hasOwnProperty('exception'))
 }
 
 export function docsUrl(control: KubescapeControl): string {
-  return `https://hub.armo.cloud/docs/${control.id.toLocaleLowerCase()}`;
+  return `https://hub.armosec.io/docs/${control.id.replaceAll('.', '-').toLocaleLowerCase()}`;
 }

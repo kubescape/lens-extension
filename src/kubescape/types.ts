@@ -18,7 +18,8 @@ export type KubescapeClusterScanResult = {
     frameworks: any;
     isScanning: boolean;
     time: number;
-    rawResult: any;
+    resourceIdToResult: any;
+    resourceIdToResource: any;
 }
 
 export type KubescapeReportStoreModel = {
@@ -35,5 +36,5 @@ export type KubescapeControl = {
     remediation: string;
     severity: Severity;
     status: ControlStatus;
-    rawResult: any;
+    relatedResourceIds: string[];
 }

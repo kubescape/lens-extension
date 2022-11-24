@@ -3,10 +3,8 @@ import { observable, makeObservable, computed } from "mobx";
 import { KubescapeReportStoreModel, KubescapeClusterScanResult, KubescapeControl } from "../kubescape/types";
 import { toKubescapeControl } from "../kubescape/controlUtils";
 
-const { Store } = Common;
 
-
-export class KubescapeReportStore extends Store.ExtensionStore<KubescapeReportStoreModel> {
+export class KubescapeReportStore extends Common.Store.ExtensionStore<KubescapeReportStoreModel> {
     @observable scanResults: KubescapeClusterScanResult[] = [];
 
     @computed get activeCluster() {
@@ -35,16 +33,38 @@ export class KubescapeReportStore extends Store.ExtensionStore<KubescapeReportSt
       return this.activeClusterReportResult.controls.map(control => toKubescapeControl(control));
     }
 
+    @computed get kubescapeResultMap() {
+      if (!this.activeClusterReportResult || !this.activeClusterReportResult.controls) {
+        return null;
+      }
+      return this.activeClusterReportResult.resourceIdToResult;
+    }
+    
+    @computed get kubescapeRawResourceMap() {
+      if (!this.activeClusterReportResult || !this.activeClusterReportResult.controls) {
+        return null;
+      }
+      return this.activeClusterReportResult.resourceIdToResource;
+    }
+
     @computed get isScanReady() {
       return this.activeClusterReportResult && this.activeClusterReportResult.controls;
     }
 
-    getStore = (kind, apiVersion) => {
-      return Renderer.K8sApi.apiManager.getStore(Renderer.K8sApi.apiManager.getApiByKind(kind, apiVersion)) as Renderer.K8sApi.KubeObjectStore<Renderer.K8sApi.KubeObject>;
-    }
-
     getKubeObject = async (namespace : string, kind: string, apiVersion: string, id: string): Promise<Renderer.K8sApi.KubeObject> => {
-      const store = this.getStore(kind, apiVersion);
+      
+      const kubeApi = Renderer.K8sApi.apiManager.getApiByKind(kind, apiVersion);
+      if (kubeApi == null) {
+        console.error(`Could not find api for kind ${kind} and apiVersion ${apiVersion}`);
+        return null
+      }
+
+     
+      const store = Renderer.K8sApi.apiManager.getStore(kubeApi)
+      if (store == null) {
+        console.error("Could not find store for kind: " + kind + " apiVersion: " + apiVersion);
+        return null;
+      }
 
       if (!store.isLoaded || !store.getById(id)) {
         await store.loadAll({ namespaces: [namespace], merge: false });

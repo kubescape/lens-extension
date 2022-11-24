@@ -3,26 +3,20 @@ import { KubernetesCluster } from "@k8slens/extensions/dist/src/common/catalog-e
 import { Logger, SCAN_CLUSTER_EVENT_NAME } from "../utils";
 
 function parseScanResult(scanResult: any) {
-  const controls = {};
-  const frameworks = [];
-    
-  if (Object.keys(scanResult).length <= 0) {
-    Logger.debug({ msg: "Scan cluster ended with no results", result: scanResult })
-    return [[], []]
+  let resourceIdtoResult = {}
+  let resourceIdToResource = {}
+  for (const resource of scanResult.resources) {
+    resourceIdToResource[resource.resourceID] = resource.object
   }
 
-  for (const framework of scanResult) {
-    const { controlReports, ...frameworkData } = framework
-    for (const control of controlReports) {
-      if (control.controlID in controls) {
-        continue;
-      }
-      controls[control.controlID] = control;
+  for (const result of scanResult.results) {
+    resourceIdtoResult[result.resourceID] = result.controls
+
+    for (const control of result.controls) {
+      scanResult.summaryDetails.controls[control.controlID].resourceIDs[result.resourceID] = result.resourceID
     }
-        
-    frameworks.push(frameworkData);
   }
-  return [Object.values(controls), frameworks] as const;
+  return [Object.values(scanResult.summaryDetails.controls), resourceIdToResource, resourceIdtoResult] as const;
 }
 
 export async function scanClusterTask(preferenceStore, reportStore, ipc) {
@@ -62,17 +56,16 @@ export async function scanClusterTask(preferenceStore, reportStore, ipc) {
   const kubeconfigPath = (<KubernetesCluster>activeEntity).spec.kubeconfigPath
   const kubeconfigContext = (<KubernetesCluster>activeEntity).spec.kubeconfigContext
   const scanClusterResult = await ipc.invoke(SCAN_CLUSTER_EVENT_NAME, kubeconfigContext, kubeconfigPath);
-  console.debug(scanClusterResult);
-
-  const [controls, frameworks] = parseScanResult(scanClusterResult);
+  Logger.debug(scanClusterResult);
+  
+  const [controls, resourceIdToResource, resourceIdToResult] = parseScanResult(scanClusterResult);
 
   scanResult = reportStore.scanResults.find(result => result.clusterId == clusterId);
 
   if (scanResult) {
-    // Update Store
-    //scanResult.rawResult = ""; // commented out to reduce size of file
     scanResult.controls = controls;
-    scanResult.frameworks = frameworks;
+    scanResult.resourceIdToResource = resourceIdToResource;
+    scanResult.resourceIdToResult = resourceIdToResult;
 
     Logger.debug(`Saved scan result of cluster '${clusterName}'`);
 
