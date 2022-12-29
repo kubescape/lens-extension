@@ -1,6 +1,6 @@
 # Kubescape Lens Extension
 
-This extension brings out the power of [Kubescape][kubescape] into [Lens][lens] so managing cluster was never simpler and safer.
+[This extension](https://www.armosec.io/blog/kubescape-integrates-with-prometheus-and-lens/?utm_source=github&utm_medium=repository) brings  the power of [Kubescape][kubescape] to [Lens][lens] so managing clusters was never simpler and more secure.
 
 [![License][license-img]][license]
 ![GitHub Workflow Status](https://img.shields.io/github/workflow/status/kubescape/lens-extension/publish)
@@ -32,13 +32,13 @@ This extension brings out the power of [Kubescape][kubescape] into [Lens][lens] 
 
 ## Getting Started
 
-Kubescape extension for Lens will help you to easily scan and detect misconfigurations, software vulnerabilities, and RBAC (role-based-access-control) violations in your K8S cluster.
+The Kubescape extension for Lens will help you to easily scan and detect misconfigurations, software vulnerabilities, and RBAC (role-based-access-control) violations in your Kubernetes cluster.
 
 #### Cluster-level information
 
 * Navigate to `Kubescape` from the side menu.
 * A Kubescape scan runs automatically on your cluster for the first time. You can also run a scan on-demand by clicking the __Scan__ button.
-* The table reflects a cluster-level summary of kubescape scan results.
+* The table reflects a cluster-level summary of Kubescape scan results.
 
 <img src="docs/scan-results.png"> 
 
@@ -50,9 +50,9 @@ Kubescape extension for Lens will help you to easily scan and detect misconfigur
 
 #### Object-level information
 
-* Kubescape information is also available at the object level. Click on the desired resource to open the details side bar and scroll down for Kubescape section:
+* Kubescape information is also available at the object level. Click on the desired resource to open the details side bar and scroll down to Kubescape section:
 
->_This view shows only failed controls. If you don't see any that's a good thing :)_
+>_This view only shows failed controls. If you don't see any that's a good thing :sweat_smile:_
 
 <img src="docs/object-level-info.png"> 
 
@@ -85,7 +85,7 @@ npm install
 npm run build
 ```
 
-3. To put your development build into watch mode you can run:
+3. To put your development build in watch mode you can run:
 
 ```sh
 npm start
@@ -93,7 +93,7 @@ npm start
 
 4. Open Lens and navigate to the Extensions page (or press <kbd>Command</kbd> + <kbd>Shift</kbd>+<kbd>E</kbd> on macOS).
 
-5. If everything is fine, you should see the ``@kubescape/lens-extension`` extension listed under __Installed Extensions__. Click __Enable__ to enable it
+5. If everything is fine, you should see the ``@kubescape/lens-extension`` extension listed under __Installed Extensions__. Click __Enable__ to enable it.
 
 
 To reflect your source code changes, reload the Lens window by pressing <kbd>Command</kbd>+<kbd>R</kbd> (macOS). Note: Any changes which affect Len's main thread will require a restart to the Lens application.
