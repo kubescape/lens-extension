@@ -5,6 +5,7 @@
 [![License][license-img]][license]
 ![GitHub Workflow Status](https://img.shields.io/github/workflow/status/kubescape/lens-extension/publish)
 ![GitHub package.json version](https://img.shields.io/github/package-json/v/kubescape/lens-extension)
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fkubescape%2Flens-extension.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2Fkubescape%2Flens-extension?ref=badge_shield)
 
 ## Prerequisites
 
@@ -117,3 +118,7 @@ rm ~/.k8slens/extensions/kubescape
 [license-img]: https://img.shields.io/github/license/kubescape/lens-extension
 [nodejs]: https://www.nodejs.org/en/
 [lens-installation]: https://github.com/lensapp/lens#installation
+
+
+## License
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fkubescape%2Flens-extension.svg?type=large)](https://app.fossa.com/projects/git%2Bgithub.com%2Fkubescape%2Flens-extension?ref=badge_large)
