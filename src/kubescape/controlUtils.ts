@@ -134,5 +134,5 @@ export function isFailedResult(resultObject: any): boolean {
 }
 
 export function docsUrl(control: KubescapeControl): string {
-  return `https://hub.armosec.io/docs/${control.id.replaceAll('.', '-').toLocaleLowerCase()}`;
+  return `https://kubescape.io/docs/controls/${control.id.replaceAll('.', '-').toLocaleLowerCase()}`;
 }
