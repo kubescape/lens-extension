@@ -55,7 +55,7 @@ export async function scanClusterTask(preferenceStore, reportStore, ipc) {
   
   const kubeconfigPath = (<KubernetesCluster>activeEntity).spec.kubeconfigPath
   const kubeconfigContext = (<KubernetesCluster>activeEntity).spec.kubeconfigContext
-  const scanClusterResult = await ipc.invoke(SCAN_CLUSTER_EVENT_NAME, kubeconfigContext, kubeconfigPath);
+  const scanClusterResult = await ipc.invoke(SCAN_CLUSTER_EVENT_NAME, kubeconfigContext, kubeconfigPath, [...preferenceStore.excludedNamespaces]);
   Logger.debug(scanClusterResult);
   
   const [controls, resourceIdToResource, resourceIdToResult] = parseScanResult(scanClusterResult);

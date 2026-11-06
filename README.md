@@ -58,6 +58,23 @@ The Kubescape extension for Lens will help you to easily scan and detect misconf
 
 
 
+## Namespace exclusions
+
+Open the application preferences and find **Kubescape Preferences**. Enter a comma-separated
+list in **Excluded namespaces**, then click **Save**. For example:
+`kube-system,kube-public,monitoring`.
+
+This setting applies to all clusters. By default, no namespaces are excluded. Names must be
+valid Kubernetes namespace names; whitespace and duplicate names are removed. Clear the field
+and save to remove all exclusions.
+
+Changes apply to subsequent scans. Existing reports stay unchanged until you click **Scan**
+on the cluster's Kubescape page. Object details use that same report.
+
+The bundled Kubescape v2.3.1 scanner also skips most cluster-scoped resources, including Nodes
+and ClusterRoles, when namespace exclusions are enabled. Namespace objects themselves are
+filtered by name. See the [scanner's namespace filtering implementation](https://github.com/kubescape/kubescape/blob/v2.3.1/core/pkg/resourcehandler/fieldselector.go).
+
 ## Development mode
 
 > You must have a working [Node.js][nodejs] environment.
@@ -100,6 +117,23 @@ To reflect your source code changes, reload the Lens window by pressing <kbd>Com
 
 
 <img src="docs/development.gif"> 
+
+### Verification
+
+```sh
+npm ci
+npm test
+npm run typecheck
+npm run build
+```
+
+The automated suite uses Lens API doubles and intercepts scanner process execution. It does
+not replace testing in Lens/Freelens against a Kubernetes cluster. For runtime acceptance,
+scan a disposable cluster containing workloads in `production` and `monitoring`, save
+`monitoring` as an exclusion, then scan again. Confirm that production resources remain and
+monitoring resources disappear from the new report. Restart the application to check persistence,
+then clear the setting and rescan to verify that coverage is restored. Also check the documented
+cluster-scoped behavior with a Node or ClusterRole present in the unfiltered report.
 
 ### Uninstall
 

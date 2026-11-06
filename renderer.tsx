@@ -8,7 +8,9 @@ import { Logger } from "./src/utils/logger";
 import {
   ClusterPageIcon,
   ClusterPage,
-  KubescapeWorkloadDetails
+  KubescapeWorkloadDetails,
+  KubescapePreferenceHint,
+  KubescapePreferenceInput
 } from "./src/components";
 
 import {
@@ -107,15 +109,15 @@ export default class KubescapeExtension extends Renderer.LensExtension {
     },
   ]
 
-  // appPreferences = [
-  //   {
-  //     title: "Kubescape Preferences",
-  //     components: {
-  //       Hint: () => <KubescapePreferenceHint />,
-  //       Input: () => <KubescapePreferenceInput />
-  //     }
-  //   }
-  // ]
+  appPreferences = [
+    {
+      title: "Kubescape Preferences",
+      components: {
+        Hint: () => <KubescapePreferenceHint />,
+        Input: () => <KubescapePreferenceInput />
+      }
+    }
+  ]
 
   disposers = []
 

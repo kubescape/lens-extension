@@ -4,6 +4,7 @@ import { KubescapeApi } from "@kubescape/install";
 import { Logger } from "../utils/logger";
 import { LensUI } from "../kubescape/ui";
 import { SCAN_CLUSTER_EVENT_NAME } from "../utils/consts";
+import { normalizeExcludedNamespaces } from "../kubescape/namespaces";
 
 export class IpcMain extends Main.Ipc {
   constructor(extension: Main.LensExtension) {
@@ -12,10 +13,15 @@ export class IpcMain extends Main.Ipc {
   }
 }
 
-async function onScanCluster(event: IpcRendererEvent, clusterName: string, kubeconfigPath?: string) {
+async function onScanCluster(event: IpcRendererEvent, clusterName: string, kubeconfigPath?: string, excludedNamespaces?: string[]) {
+  const namespaces = normalizeExcludedNamespaces(excludedNamespaces);
   Logger.debug(`Received scan cluster event for '${clusterName}' (kubeconfig path = ${kubeconfigPath})`);
   const kubescapeApi = KubescapeApi.instance
-  const result = await kubescapeApi.scanCluster(new LensUI() , clusterName, kubeconfigPath);
+  const result = namespaces.length
+    ? await kubescapeApi.scanCluster(new LensUI(), clusterName, kubeconfigPath, {
+      "exclude-namespaces": namespaces.join(",")
+    })
+    : await kubescapeApi.scanCluster(new LensUI(), clusterName, kubeconfigPath);
   Logger.debug(`Kubescape scan result for cluster '${clusterName}': ` + JSON.stringify(result));
   Logger.debug(`Scan completed for cluster ${clusterName}`);
   return result;
